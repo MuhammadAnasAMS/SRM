@@ -1,0 +1,121 @@
+﻿@model PIA_SRM_MVC.Models.OtpModel
+@{
+    ViewBag.Title = "Get OTP";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    Response.Cache.SetCacheability(HttpCacheability.NoCache);
+    Response.Cache.SetNoStore();
+}
+
+<div class="login-form">
+    <div class="auth-switch">
+        <a href="@Url.Action("Login", "Account")" class="@(ViewBag.Title == "Login" ? "active" : "")">Login</a>
+        <a href="@Url.Action("GetOtp", "Account")" class="@(ViewBag.Title == "Get OTP" ? "active" : "")">Sign Up</a>
+    </div>
+
+    <div class="logo">
+        <img src="~/Content/pia-logo.png" alt="PIA Logo" style="width: 250px; margin-bottom: 10px;" />
+        <p class="portal-title">PIA SRM Portal</p>
+    </div>
+
+    @using (Html.BeginForm("GetOtp", "Account", FormMethod.Post, new { id = "otpForm" }))
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.EmployeeId)
+            @Html.TextBoxFor(m => m.EmployeeId, new { @class = "form-control", placeholder = "Enter Employee ID" })
+            @Html.ValidationMessageFor(m => m.EmployeeId, "", new { @class = "text-danger" })
+        </div>
+
+        <button type="submit" class="btn-login" id="getOtpBtn">Get OTP</button>
+    }
+
+    @* Optional TempData message block *@
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success" id="otpMessage">
+            @TempData["Message"]
+        </div>
+    }
+</div>
+
+@* OTP Pop-up Card *@
+<div id="otpPopup" class="popup-card" style="display:none;">
+    <div class="popup-content">
+        <span class="close-btn" onclick="hidePopup()">&times;</span>
+        <h3>OTP Verification</h3>
+        <p>OTP has been sent successfully to your registered contact.</p>
+        <input type="text" class="form-control" placeholder="Enter OTP" style="margin-top: 15px;" />
+        <button class="btn-login" style="margin-top: 15px;">Verify OTP</button>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        window.addEventListener("pageshow", function () {
+            document.querySelectorAll(".form-control").forEach(function (input) {
+                input.value = "";
+            });
+
+            setTimeout(function () {
+                var otpMsg = document.getElementById("otpMessage");
+                if (otpMsg) otpMsg.style.display = 'none';
+            }, 3000);
+        });
+
+        // Show popup when OTP button is clicked
+        document.getElementById("otpForm").addEventListener("submit", function (e) {
+            e.preventDefault(); // prevent form submission
+            document.getElementById("otpPopup").style.display = "flex";
+        });
+
+        // Close popup
+        function hidePopup() {
+            document.getElementById("otpPopup").style.display = "none";
+        }
+    </script>
+}
+
+<style>
+    /* Popup styling */
+    .popup-card {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .popup-content {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        width: 350px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        position: relative;
+    }
+
+        .popup-content h3 {
+            margin-top: 0;
+            color: #034c2e;
+        }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 20px;
+        cursor: pointer;
+        color: #aaa;
+    }
+
+        .close-btn:hover {
+            color: #000;
+        }
+</style>
+    
