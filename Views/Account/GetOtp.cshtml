@@ -1,7 +1,7 @@
 ﻿@model PIA_SRM_MVC.Models.OtpModel
 @{
     ViewBag.Title = "Get OTP";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/Login_Layout.cshtml";
 
     Response.Cache.SetCacheability(HttpCacheability.NoCache);
     Response.Cache.SetNoStore();
@@ -16,6 +16,13 @@
     <div class="logo">
         <img src="~/Content/pia-logo.png" alt="PIA Logo" style="width: 250px; margin-bottom: 10px;" />
         <p class="portal-title">PIA SRM Portal</p>
+        @* Optional TempData message block *@
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success" id="otpMessage">
+                @TempData["Message"]
+            </div>
+        }
     </div>
 
     @using (Html.BeginForm("GetOtp", "Account", FormMethod.Post, new { id = "otpForm" }))
@@ -28,14 +35,6 @@
 
         <button type="submit" class="btn-login" id="getOtpBtn">Get OTP</button>
     }
-
-    @* Optional TempData message block *@
-    @if (TempData["Message"] != null)
-    {
-        <div class="alert alert-success" id="otpMessage">
-            @TempData["Message"]
-        </div>
-    }
 </div>
 
 @* OTP Pop-up Card *@
@@ -44,8 +43,12 @@
         <span class="close-btn" onclick="hidePopup()">&times;</span>
         <h3>OTP Verification</h3>
         <p>OTP has been sent successfully to your registered contact.</p>
-        <input type="text" class="form-control" placeholder="Enter OTP" style="margin-top: 15px;" />
-        <button class="btn-login" style="margin-top: 15px;">Verify OTP</button>
+        @using (Html.BeginForm("ConfirmOtp", "Account", FormMethod.Post))
+        {
+            <input type="text" name="otp" class="form-control" placeholder="Enter OTP" style="margin-top: 15px;" required />
+            <button type="submit" class="btn-login" style="margin-top: 15px;">Verify OTP</button>
+        }
+
     </div>
 </div>
 

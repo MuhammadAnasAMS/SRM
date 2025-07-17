@@ -23,7 +23,7 @@ namespace PIA_SRM_MVC.Controllers
                 {
                     // TempData can be replaced with session or auth cookie
                     TempData["Message"] = "Login Successful!";
-                    return RedirectToAction("Dashboard");
+                    return RedirectToAction("Dashboard", "Dashboard");
                 }
                 else
                 {
@@ -72,6 +72,19 @@ namespace PIA_SRM_MVC.Controllers
             }
 
             return View(model);
+        }
+        [HttpPost]
+        public ActionResult ConfirmOtp(string otp)
+        {
+            // ✅ Replace this logic with your OTP verification
+            if (otp == "123456") // Sample logic
+            {
+                TempData["Message"] = "OTP verified. Please set your password.";
+                return RedirectToAction("ResetPassword");
+            }
+
+            TempData["Message"] = "Invalid OTP. Try again.";
+            return RedirectToAction("GetOtp");
         }
     }
 }
