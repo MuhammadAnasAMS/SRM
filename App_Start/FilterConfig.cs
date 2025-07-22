@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace PIA_SRM_MVC
+namespace PIA_Admin_Dashboard
 {
     public class FilterConfig
     {

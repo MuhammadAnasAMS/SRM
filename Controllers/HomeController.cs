@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace PIA_SRM_MVC.Controllers
+namespace PIA_Admin_Dashboard.Controllers
 {
     public class HomeController : Controller
     {

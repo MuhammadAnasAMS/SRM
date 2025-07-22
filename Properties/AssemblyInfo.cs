@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("PIA_SRM_MVC")]
+[assembly: AssemblyTitle("PIA_Admin_Dashboard")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("PIA_SRM_MVC")]
+[assembly: AssemblyProduct("PIA_Admin_Dashboard")]
 [assembly: AssemblyCopyright("Copyright ©  2025")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0645e656-0939-47d9-898e-656c0084d6fc")]
+[assembly: Guid("138e0c0a-9ada-43c7-a4ce-5c96f0a9808f")]
 
 // Version information for an assembly consists of the following four values:
 //

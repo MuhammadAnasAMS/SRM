@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace PIA_SRM_MVC
+namespace PIA_Admin_Dashboard
 {
     public class RouteConfig
     {
@@ -14,11 +14,10 @@ namespace PIA_SRM_MVC
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
-              name: "Default",
-              url: "{controller}/{action}/{id}",
-              defaults: new { controller = "Account", action = "Login", id = UrlParameter.Optional }
+                name: "Default",
+                url: "{controller}/{action}/{id}",
+                defaults: new { controller = "Admin", action = "Dashboard", id = UrlParameter.Optional }
             );
-
         }
     }
 }
