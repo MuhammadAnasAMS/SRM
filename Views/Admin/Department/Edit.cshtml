@@ -13,15 +13,6 @@
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     }
-
-    .edit-header {
-        font-size: 28px;
-        font-weight: 700;
-        color: #004080;
-        text-align: center;
-        margin-bottom: 25px;
-    }
-
     .form-group {
         margin-bottom: 25px;
     }
@@ -84,8 +75,8 @@
     }
 </style>
 
-<section class="edit-section">
-    <div class="edit-header">Edit Department Details</div>
+<div class="card">
+    <div class="card-header">Edit Department Details</div>
 
     @using (Html.BeginForm())
     {
@@ -110,4 +101,4 @@
                                     </a>
                                 </div>}
 
-</section>
+    </section>

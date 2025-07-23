@@ -12,5 +12,6 @@ namespace PIA_Admin_Dashboard.Models
         : base("name=PIA_SRM_Connection") { }
 
         public DbSet<Department> Departments { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

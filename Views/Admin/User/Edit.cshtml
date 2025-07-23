@@ -1,0 +1,138 @@
+﻿@model PIA_Admin_Dashboard.Models.User
+
+@{
+    ViewBag.Title = "Edit User";
+    ViewBag.ScreenTitle = "User Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Edit User</span>
+        <a href="@Url.Action("Details", "User", new { id = Model.UserId })" class="btn-primary" style="
+            background-color: #1d3c34;
+            padding: 6px 12px;
+            font-size: 14px;
+            text-decoration: none;">
+            ← Back
+        </a>
+    </div>
+
+    @using (Html.BeginForm("Edit", "User", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.UserId)
+
+        <!-- Avatar Section -->
+        <div style="text-align: center; margin: 25px 0;">
+            <img src="@(!string.IsNullOrEmpty(Model.Designation) ? Model.Designation : "https://www.w3schools.com/howto/img_avatar.png")"
+                 alt="Profile Picture"
+                 style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid #1d3c34;" />
+            <div style="margin-top: 10px;">
+                @Html.TextBoxFor(m => m.Designation, new
+                {
+                    @class = "styled-input",
+                    placeholder = "Optional image URL..."
+                })
+            </div>
+        </div>
+
+        <!-- Input Fields -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 0 15px;">
+
+            <div class="form-group">
+                <label>Name:</label>
+                @Html.TextBoxFor(m => m.Name, new { @class = "styled-input", required = "required" })
+            </div>
+
+            <div class="form-group">
+                <label>Employee ID:</label>
+                @Html.TextBoxFor(m => m.EmployeeId, new { @class = "styled-input", required = "required" })
+            </div>
+
+            <div class="form-group">
+                <label>Email:</label>
+                @Html.TextBoxFor(m => m.Email, new { @class = "styled-input", type = "email", required = "required" })
+            </div>
+
+            <div class="form-group">
+                <label>Mobile:</label>
+                @Html.TextBoxFor(m => m.Mobile, new { @class = "styled-input" })
+            </div>
+
+            <div class="form-group">
+                <label>Department:</label>
+                @Html.DropDownList("DepartmentId", (SelectList)ViewBag.DepartmentId, "-- Select Department --", new { @class = "styled-input", required = "required" })
+            </div>
+
+            <div class="form-group">
+                <label>Role:</label>
+                @Html.DropDownListFor(m => m.Role, new SelectList(new[] { "Employee", "DepartmentAdmin" }, Model.Role), "-- Select Role --", new { @class = "styled-input", required = "required" })
+            </div>
+
+            <div class="form-group">
+                <label>Status:</label>
+                @Html.DropDownListFor(m => m.Status, new SelectList(new[] { "Online", "Offline" }, Model.Status), "-- Select Status --", new { @class = "styled-input", required = "required" })
+            </div>
+
+            <button type="submit" class="submit-button">
+                💾 Save Changes
+            </button>
+        </div>
+    }
+</div>
+
+<!-- Styles -->
+<style>
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        max-width: 400px;
+    }
+
+        .form-group label {
+            font-size: 15px;
+            margin-bottom: 4px;
+            color: #333;
+            font-weight: 500;
+        }
+
+    .styled-input {
+        width: 100%;
+        height: 40px;
+        padding: 6px 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+        background-color: #fafafa;
+        transition: border-color 0.3s ease;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+        .styled-input:focus {
+            border-color: #1d3c34;
+            background-color: #fff;
+            outline: none;
+        }
+
+    .submit-button {
+        margin-top: 20px;
+        background-color: #1d3c34;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        max-width: 400px;
+    }
+
+        .submit-button:hover {
+            background-color: #145c4b;
+        }
+</style>

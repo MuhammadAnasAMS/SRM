@@ -12,14 +12,6 @@
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     }
-
-    .department-header {
-        font-size: 28px;
-        font-weight: 700;
-        color: #004080;
-        margin-bottom: 25px;
-    }
-
     .input-container {
         display: flex;
         gap: 15px;
@@ -93,8 +85,8 @@
     }
 </style>
 
-<div class="department-section">
-    <div class="department-header">Manage Departments</div>
+<div class="card">
+    <div class="card-header">Manage Departments</div>
 
     <!-- Department Add Form -->
     <form method="post" action="@Url.Action("Add", "Department")" class="input-container">

@@ -1,0 +1,31 @@
+﻿@model PIA_Admin_Dashboard.Models.User
+
+<tr style="border-bottom: 1px solid #ddd;">
+    <td>
+        <a href="@Url.Action("Details", "User", new { id = Model.UserId })" style="display: flex; align-items: center; gap: 15px; text-decoration:none; color: inherit;">
+            <img src="@(string.IsNullOrEmpty(Model.Designation) ? "https://www.w3schools.com/howto/img_avatar.png" : Model.Designation)"
+                 alt="Profile"
+                 style="width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #1d3c34;"
+                 onerror="this.onerror=null;this.src='https://www.w3schools.com/howto/img_avatar.png';" />
+            <div>
+                <strong>@Model.Name</strong>
+            </div>
+        </a>
+    </td>
+    <td>@Model.Role</td>
+    <td>
+        @if (Model.Status == "Online")
+        {
+            <span style="color:green; font-weight:bold;">Online</span>
+        }
+        else
+        {
+            <span style="color:red;">Offline</span>
+        }
+    </td>
+    <td>
+        <a href="@Url.Action("Details", "User", new { id = Model.UserId })" class="btn-primary" style="padding:5px 10px; font-size:14px;">
+            View
+        </a>
+    </td>
+</tr>

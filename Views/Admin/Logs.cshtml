@@ -1,8 +1,98 @@
-﻿
+﻿@model List<PIA_Admin_Dashboard.Models.LogEntry>
+
 @{
-    ViewBag.Title = "Logs";
+    ViewBag.Title = "System Logs";
+    ViewBag.ScreenTitle = "System Logs";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Logs</h2>
+<style>
+    .logs-section {
+        width: 95%;
+        margin: 30px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
 
+    th, td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #dee2e6;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    th {
+        background-color: #f1f5f9;
+        font-weight: 700;
+    }
+
+    .badge {
+        font-size: 14px;
+        padding: 6px 12px;
+        border-radius: 20px;
+    }
+
+    .badge-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .badge-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header">Activity Logs</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Employee ID</th>
+                <th>Name</th>
+                <th>IP Address</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                int index = 1;
+                foreach (var log in Model)
+                {
+                    <tr>
+                        <td>@index</td>
+                        <td>@log.EmployeeId</td>
+                        <td>@log.EmployeeName</td>
+                        <td>@log.IpAddress</td>
+                        <td>
+                            <span class="badge @(log.Status == "Login" ? "badge-success" : "badge-danger")">
+                                @log.Status
+                            </span>
+                        </td>
+                        <td>@log.DateTime.ToString("yyyy-MM-dd")</td>
+                        <td>@log.DateTime.ToString("hh:mm tt")</td>
+                    </tr>
+                    index++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" style="color: #888;">No logs found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

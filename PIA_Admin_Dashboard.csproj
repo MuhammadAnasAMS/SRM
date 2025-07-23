@@ -129,15 +129,20 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
+    <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ApiEmployeeResponse.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\Department.cs" />
+    <Compile Include="Models\LogEntry.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\OtpModel.cs" />
     <Compile Include="Models\ResetPasswordModel.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -146,7 +151,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\pia-logo.png" />
-    <Content Include="Database\Db_Script.sql" />
+    <Content Include="Database\script.sql" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -176,7 +181,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Admin\Users.cshtml" />
     <Content Include="Views\Admin\Logs.cshtml" />
     <Content Include="Views\Admin\Complaints.cshtml" />
     <Content Include="Views\Admin\Dashboard.cshtml" />
@@ -186,12 +190,17 @@
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Shared\Account_Layout.cshtml" />
+    <Content Include="Views\Admin\User\Index.cshtml" />
+    <Content Include="Views\Admin\User\Create.cshtml" />
+    <Content Include="Views\Admin\User\Edit.cshtml" />
+    <Content Include="Views\Admin\User\Details.cshtml" />
+    <Content Include="Views\Shared\_UserRowPartial.cshtml" />
+    <Content Include="Views\Admin\Groups\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Admin\Complaints\" />
     <Folder Include="Views\Admin\Logs\" />
-    <Folder Include="Views\Admin\User\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

@@ -23,7 +23,7 @@ namespace PIA_SRM_MVC.Controllers
                 {
                     // TempData can be replaced with session or auth cookie
                     TempData["Message"] = "Login Successful!";
-                    return RedirectToAction("Dashboard", "Admin");
+                    return RedirectToAction("Dashboard", "Dashboard");
                 }
                 else
                 {

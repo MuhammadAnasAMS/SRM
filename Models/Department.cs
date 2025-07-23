@@ -14,7 +14,10 @@ namespace PIA_Admin_Dashboard.Models
         public string Name { get; set; }
 
         [Column("created_at")]
-        public DateTime CreatedAt { get; set; } 
+        public DateTime CreatedAt { get; set; }
+
+        public virtual ICollection<User> Users { get; set; }
+
     }
 
 }

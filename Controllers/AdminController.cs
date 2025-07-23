@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using PIA_Admin_Dashboard.Models;
 
 namespace PIA_Admin_Dashboard.Controllers
 {
@@ -33,8 +34,14 @@ namespace PIA_Admin_Dashboard.Controllers
 
         public ActionResult Logs()
         {
-            ViewBag.ScreenTitle = "System Logs";
-            return View();
+            var logs = new List<LogEntry>
+            {
+        new LogEntry { EmployeeId = "EMP001", EmployeeName = "Ali Raza", IpAddress = "192.168.1.10", Status = "Login", DateTime = DateTime.Now },
+        new LogEntry { EmployeeId = "EMP002", EmployeeName = "Zara Khan", IpAddress = "192.168.1.20", Status = "Logout", DateTime = DateTime.Now.AddMinutes(-30) },
+        // Add more dummy data
+            };
+
+            return View(logs);
         }
     }
 }

@@ -1,0 +1,97 @@
+﻿@model IEnumerable<PIA_Admin_Dashboard.Models.User>
+
+@{
+    ViewBag.Title = "User Management";
+    ViewBag.ScreenTitle = "User Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var superUsers = Model.Where(u => u.Role == "SuperUser").ToList();
+    var groupedDepartments = Model
+        .Where(u => u.Role != "SuperUser")
+        .GroupBy(u => u.Department?.Name)
+        .OrderBy(g => g.Key);
+}
+
+<!-- Super Users Section -->
+<div class="card">
+    <div class="card-header">
+        Super Users
+    </div>
+
+    @if (superUsers.Any())
+    {
+        <table class="card-table">
+            <thead>
+                <tr style="background-color:#1d3c34; color:white;">
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+        <tbody>
+        @foreach (var user in superUsers)
+        {
+            @Html.Partial("_UserRowPartial", user)
+        }
+    </tbody>
+</table>
+    }
+    else
+    {
+        <p>No Super Users found.</p>
+    }
+</div>
+
+
+<!-- Department-Wise Section -->
+@foreach (var departmentGroup in groupedDepartments)
+{
+    <div class="card" style="margin-top:30px;">
+        <div class="card-header">
+            <h3>@(string.IsNullOrEmpty(departmentGroup.Key) ? "No Department" : departmentGroup.Key)</h3>
+        </div>
+
+        <table class="card-table">
+            <thead>
+                <tr style="background-color:#1d3c34; color:white;">
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @{
+                    var orderedUsers = departmentGroup
+                        .OrderBy(u => u.Role == "DepartmentAdmin" ? 0 : (u.Role == "Employee" ? 1 : 2))
+                        .ThenBy(u => u.Name);
+                }
+
+                @foreach (var user in orderedUsers)
+                {
+                    @Html.Partial("_UserRowPartial", user)
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<!-- Floating Add Button -->
+<a href="@Url.Action("Create", "User")" class="btn-primary" style="
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+">
+    +
+</a>
