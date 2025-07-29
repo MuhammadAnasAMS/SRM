@@ -128,19 +128,28 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\AgentController.cs" />
+    <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ProgramController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\WorkAreaController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Agent.cs" />
     <Compile Include="Models\ApiEmployeeResponse.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
+    <Compile Include="Models\DashboardViewModel.cs" />
     <Compile Include="Models\Department.cs" />
+    <Compile Include="Models\Location.cs" />
     <Compile Include="Models\LogEntry.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\OtpModel.cs" />
+    <Compile Include="Models\Program.cs" />
+    <Compile Include="Models\Request_Master.cs" />
     <Compile Include="Models\ResetPasswordModel.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -196,11 +205,21 @@
     <Content Include="Views\Admin\User\Details.cshtml" />
     <Content Include="Views\Shared\_UserRowPartial.cshtml" />
     <Content Include="Views\Admin\Groups\Index.cshtml" />
+    <Content Include="Views\Admin\Program\Edit.cshtml" />
+    <Content Include="Views\Admin\Program\Index.cshtml" />
+    <Content Include="Views\Admin\Agent\Create.cshtml" />
+    <Content Include="Views\Admin\Agent\Details.cshtml" />
+    <Content Include="Views\Admin\Agent\Edit.cshtml" />
+    <Content Include="Views\Admin\Agent\Index.cshtml" />
+    <Content Include="Views\Shared\_AgentPartialRow.cshtml" />
+    <Content Include="Views\Admin\WorkArea\Index.cshtml" />
+    <Content Include="Views\Admin\WorkArea\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Admin\Complaints\" />
     <Folder Include="Views\Admin\Logs\" />
+    <Folder Include="Views\Dashboard\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

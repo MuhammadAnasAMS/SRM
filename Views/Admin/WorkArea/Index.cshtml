@@ -1,0 +1,159 @@
+﻿@model List<PIA_Admin_Dashboard.Models.Location>
+
+@{
+    ViewBag.Title = "Work Area Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .department-section {
+        width: 95%;
+        margin: 30px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .input-container {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+        align-items: center;
+    }
+
+        .input-container input[type="text"],
+        .input-container select {
+            flex: 1;
+            padding: 14px 20px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .input-container button {
+            background-color: #28a745;
+            color: white;
+            padding: 14px 22px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .input-container button:hover {
+                background-color: #218838;
+            }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #dee2e6;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    th {
+        background-color: #f1f5f9;
+        font-weight: 700;
+    }
+
+    .action-icons i {
+        font-size: 18px;
+        margin: 0 6px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+        .action-icons i:hover {
+            transform: scale(1.2);
+        }
+
+    .edit-icon {
+        color: green !important;
+    }
+
+    .delete-icon {
+        color: red !important;
+    }
+
+    .action-icons a {
+        text-decoration: none;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header">Manage Work Areas</div>
+    <!-- Show error message if any -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div style="color: red; font-weight: bold; margin-bottom: 10px;">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- Add Work Area Form -->
+    <form method="post" action="@Url.Action("Add", "WorkArea")" class="input-container">
+        <input type="text" name="LocationID" placeholder="Work Area ID" required />
+        <input type="text" name="LocationDescription" placeholder="Description" required />
+        <select name="ProgramId" required>
+            <option value="">Select Program</option>
+            @foreach (var prog in ViewBag.Programs as List<PIA_Admin_Dashboard.Models.Program>)
+            {
+                <option value="@prog.ProgramId">@prog.Name</option>
+            }
+        </select>
+        <button type="submit">+ Add Work Area</button>
+    </form>
+
+    <!-- Work Area Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Work Area ID</th>
+                <th>Description</th>
+                <th>Program</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                int index = 1;
+                foreach (var area in Model)
+                {
+                    <tr>
+                        <td>@index</td>
+                        <td>@area.LocationID</td>
+                        <td>@area.LocationDescription</td>
+                        <td>@(area.Program != null ? area.Program.Name : "-")</td>
+                        <td class="action-icons">
+                            <a href="@Url.Action("Edit", "WorkArea", new { id = area.Sno })" title="Edit">
+                                <i class="fas fa-edit edit-icon"></i>
+                            </a>
+                            <a href="@Url.Action("Delete", "WorkArea", new { id = area.Sno })"
+                               onclick="return confirm('Are you sure you want to delete this Work Area?');" title="Delete">
+                                <i class="fas fa-trash delete-icon"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    index++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" style="color: #888;">No work areas found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

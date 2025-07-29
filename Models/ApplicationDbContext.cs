@@ -13,5 +13,10 @@ namespace PIA_Admin_Dashboard.Models
 
         public DbSet<Department> Departments { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Program> Programs { get; set; }
+
+        public DbSet<Agent> Agents { get; set; }
+        public DbSet<Location> Locations { get; set; }
+        public virtual DbSet<Request_Master> Request_Master { get; set; }
     }
 }

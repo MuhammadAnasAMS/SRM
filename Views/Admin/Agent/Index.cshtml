@@ -1,0 +1,173 @@
+﻿@model IEnumerable<PIA_Admin_Dashboard.Models.Agent>
+@using PIA_Admin_Dashboard.Models
+
+@{
+    ViewBag.Title = "Agent Management";
+    ViewBag.ScreenTitle = "Agent Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var groupedAgents = Model
+        .GroupBy(a => a.ProgramId)
+        .OrderBy(g => g.Key);
+}
+
+<!-- Custom Styles -->
+<style>
+    .card {
+        margin-bottom: 30px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 12px 16px;
+        background-color: #1d3c34;
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .agent-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .agent-table th,
+        .agent-table td {
+            padding: 10px;
+            vertical-align: middle;
+            border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+        }
+
+            .agent-table th:last-child,
+            .agent-table td:last-child {
+                border-right: none;
+            }
+
+        .agent-table th {
+            background-color: #1d3c34;
+            color: white;
+            text-align: left;
+        }
+
+    .agent-photo-name {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .agent-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .agent-name-email {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .agent-name-email span {
+            color: gray;
+            font-size: 13px;
+        }
+
+    .action-icons {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+        .action-icons a {
+            text-decoration: none;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .action-icons .btn-history {
+            background-color: #1d3c34;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            font-size: 13px;
+            border-radius: 4px;
+        }
+
+    .floating-add-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background-color: #1d3c34;
+        color: white;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+</style>
+
+<!-- Agent Table Rendering -->
+@foreach (var group in groupedAgents)
+{
+    var programName = "No Program Assigned";
+    if (group.FirstOrDefault()?.ProgramId != null)
+    {
+        programName = group.First().ProgramId + "";
+    }
+
+    <div class="card">
+        <div class="card-header">
+            @programName
+        </div>
+
+        <table class="agent-table">
+            <thead>
+                <tr>
+                    <th>Photo / Name & Email</th>
+                    <th>Mobile</th>
+                    <th>Status</th>
+                    <th>Work Area</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var agent in group.OrderBy(a => a.Name))
+                {
+                    <tr>
+                        <td>
+                            <div class="agent-photo-name">
+                                <img src="https://www.w3schools.com/howto/img_avatar.png" alt="avatar" class="agent-avatar" />
+                                <div class="agent-name-email">
+                                    <strong>@agent.Name</strong>
+                                    <span>@agent.Email</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@agent.Mobile</td>
+                        <td>@agent.Status</td>
+                        <td>@agent.WorkArea</td>
+                        <td class="action-icons">
+                            <a href="@Url.Action("Details", "Agent", new { id = agent.AgentId })" title="View">
+                                <i class="fas fa-eye" style="color:#1d3c34;"></i>
+                            </a>
+                            <a href="@Url.Action("History", "Agent", new { id = agent.AgentId })" title="History"
+                               class="btn-history">
+                                History
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<!-- Floating Add Button -->
+<a href="@Url.Action("Create", "Agent")" class="floating-add-btn">+</a>

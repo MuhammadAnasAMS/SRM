@@ -1,97 +1,39 @@
-﻿@model IEnumerable<PIA_Admin_Dashboard.Models.User>
+﻿@model PIA_Admin_Dashboard.Models.User
 
-@{
-    ViewBag.Title = "User Management";
-    ViewBag.ScreenTitle = "User Management";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+<tr style="border-bottom: 1px solid #ccc;">
+    <td style="display: flex; align-items: center; gap: 15px; padding: 10px;">
+        <img src="https://www.w3schools.com/howto/img_avatar.png"
+             alt="User Photo"
+             style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;" />
 
-    var superUsers = Model.Where(u => u.Role == "SuperUser").ToList();
-    var groupedDepartments = Model
-        .Where(u => u.Role != "SuperUser")
-        .GroupBy(u => u.Department?.Name)
-        .OrderBy(g => g.Key);
-}
-
-<!-- Super Users Section -->
-<div class="card">
-    <div class="card-header">
-        Super Users
-    </div>
-
-    @if (superUsers.Any())
-    {
-        <table class="card-table">
-            <thead>
-                <tr style="background-color:#1d3c34; color:white;">
-                    <th>User</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-
-        <tbody>
-        @foreach (var user in superUsers)
-        {
-            @Html.Partial("_UserRowPartial", user)
-        }
-    </tbody>
-</table>
-    }
-    else
-    {
-        <p>No Super Users found.</p>
-    }
-</div>
-
-
-<!-- Department-Wise Section -->
-@foreach (var departmentGroup in groupedDepartments)
-{
-    <div class="card" style="margin-top:30px;">
-        <div class="card-header">
-            <h3>@(string.IsNullOrEmpty(departmentGroup.Key) ? "No Department" : departmentGroup.Key)</h3>
+        <div>
+            <div style="font-weight: 600;">@Model.Name</div>
+            <div style="color: gray; font-size: 13px;">@Model.Email</div>
         </div>
+    </td>
 
-        <table class="card-table">
-            <thead>
-                <tr style="background-color:#1d3c34; color:white;">
-                    <th>User</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
+    <td style="padding: 10px; vertical-align: middle;">
+        @Model.Role
+    </td>
 
-            <tbody>
-                @{
-                    var orderedUsers = departmentGroup
-                        .OrderBy(u => u.Role == "DepartmentAdmin" ? 0 : (u.Role == "Employee" ? 1 : 2))
-                        .ThenBy(u => u.Name);
-                }
+    <td style="padding: 10px; vertical-align: middle;">
+        @if (Model.IsActive)
+        {
+            <span style="color: green;">Active</span>
+        }
+        else
+        {
+            <span style="color: red;">Inactive</span>
+        }
+    </td>
 
-                @foreach (var user in orderedUsers)
-                {
-                    @Html.Partial("_UserRowPartial", user)
-                }
-            </tbody>
-        </table>
-    </div>
-}
+    <td style="padding: 10px; vertical-align: middle;">
+        <a href="@Url.Action("Details", "User", new { id = Model.Id })" class="btn btn-sm" style="background-color: #1d3c34; color: white; margin-right: 5px;">
+            <i class="fas fa-eye"></i> View
+        </a>
 
-<!-- Floating Add Button -->
-<a href="@Url.Action("Create", "User")" class="btn-primary" style="
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    font-size: 28px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none;
-">
-    +
-</a>
+        <a href="@Url.Action("History", "User", new { id = Model.Id })" class="btn btn-sm" style="background-color: #1d3c34; color: white;">
+            <i class="fas fa-history"></i> History
+        </a>
+    </td>
+</tr>

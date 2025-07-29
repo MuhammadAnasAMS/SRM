@@ -1,0 +1,146 @@
+﻿@model PIA_Admin_Dashboard.Models.Agent
+
+@{
+    ViewBag.Title = "Add New Agent";
+    ViewBag.ScreenTitle = "Agent Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Add New Agent</span>
+        <a href="@Url.Action("Index", "Agent")" class="btn-primary" style="
+            background-color: #1d3c34;
+            padding: 6px 12px;
+            font-size: 14px;
+            text-decoration: none;">
+            ← Back
+        </a>
+    </div>
+
+    @using (Html.BeginForm("Create", "Agent", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <!-- Employee Type -->
+        <div class="form-group">
+            <label>Employee Type:</label>
+            <select id="employeeType" name="EmployeeType" class="styled-input" onchange="toggleEmployeeFields()" style="margin-bottom: 20px;">
+                <option value="">-- Select Employee Type --</option>
+                <option value="Regular">Regular Employee (PNO)</option>
+                <option value="DailyWages">Daily Wages (Manual Entry)</option>
+            </select>
+        </div>
+
+        <!-- PNO Section -->
+        <div id="regularEmployeeSection" style="display: none;">
+            <label>Employee PNO:</label>
+            <input type="text" id="pnoInput" name="PNO" class="styled-input" placeholder="Enter PNO" />
+
+            <div style="display: flex; justify-content: center; margin-top: 10px;">
+                <button type="button" onclick="fetchEmployee()" class="submit-button">🔍 Fetch Employee</button>
+            </div>
+
+            <p id="fetchStatus" style="color: red; font-weight: bold; text-align: center; margin-top: 10px;"></p>
+        </div>
+
+        <!-- Image Placeholder -->
+        <div style="text-align: center; margin: 25px 0;">
+            <img id="employeeImage"
+                 src="https://www.w3schools.com/howto/img_avatar.png"
+                 alt="Profile Picture"
+                 style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid #1d3c34;" />
+
+            <div style="margin-top: 10px;">
+                <input type="text" id="ImageUrl" class="styled-input" placeholder="Optional image URL..." />
+            </div>
+        </div>
+
+        <!-- Manual/Shared Fields -->
+        <div id="manualEntrySection" style="display: none; flex-direction: column; gap: 20px; padding: 0 15px;">
+            <div class="form-group">
+                <label>Name:</label>
+                @Html.TextBoxFor(m => m.Name, new { @class = "styled-input", required = "required", id = "Name", placeholder = "Full Name" })
+            </div>
+
+            <div class="form-group">
+                <label>Email:</label>
+                @Html.TextBoxFor(m => m.Email, new { @class = "styled-input", type = "email", required = "required", id = "Email", placeholder = "Email Address" })
+            </div>
+
+            <div class="form-group">
+                <label>Mobile:</label>
+                @Html.TextBoxFor(m => m.Mobile, new { @class = "styled-input", id = "Mobile", placeholder = "Mobile Number" })
+            </div>
+
+            <div class="form-group">
+                <label>Designation:</label>
+                <input type="text" id="Designation" class="styled-input" placeholder="Designation" />
+            </div>
+
+            <div class="form-group">
+                <label>Status:</label>
+                @Html.DropDownListFor(m => m.Status, new SelectList(new[] { "Online", "Offline" }), "-- Select Status --", new { @class = "styled-input", required = "required" })
+            </div>
+
+            <button type="submit" class="submit-button">➕ Add Agent</button>
+        </div>
+    }
+
+</div>
+<script>
+    function toggleEmployeeFields() {
+        const type = document.getElementById("employeeType").value;
+        const manualSection = document.getElementById("manualEntrySection");
+        const pnoSection = document.getElementById("regularEmployeeSection");
+
+        if (type === "Regular") {
+            pnoSection.style.display = "block";
+            manualSection.style.display = "none";
+        } else if (type === "DailyWages") {
+            pnoSection.style.display = "none";
+            manualSection.style.display = "flex";
+        } else {
+            pnoSection.style.display = "none";
+            manualSection.style.display = "none";
+        }
+    }
+
+    function fetchEmployee() {
+        const pno = document.getElementById("pnoInput").value;
+        if (!pno) {
+            document.getElementById("fetchStatus").innerText = "Enter PNO first.";
+            return;
+        }
+
+        document.getElementById("fetchStatus").innerText = "Fetching...";
+
+        fetch('/User/FetchEmployee?pno=' + encodeURIComponent(pno))
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    document.getElementById("fetchStatus").innerText = "Employee already exists!";
+                    return;
+                }
+
+                if (data.success && data.user) {
+                    document.getElementById("fetchStatus").innerText = "Employee fetched successfully.";
+
+                    // Populate form fields
+                    document.getElementById("Name").value = data.user.name || '';
+                    document.getElementById("Email").value = data.user.email || '';
+                    document.getElementById("Mobile").value = data.user.phone_Num || '';
+                    document.getElementById("Designation").value = data.user.emp_designation || '';
+                    document.getElementById("employeeImage").src = data.user.image_url || "https://www.w3schools.com/howto/img_avatar.png";
+
+                    document.getElementById("manualEntrySection").style.display = "flex";
+                } else {
+                    document.getElementById("fetchStatus").innerText = "Employee not found.";
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById("fetchStatus").innerText = "Error fetching employee.";
+            });
+    }
+</script>
