@@ -1,0 +1,109 @@
+﻿@model List<PIA_Admin_Dashboard.Models.History>
+
+@{
+    ViewBag.Title = "Login History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .history-section {
+        width: 95%;
+        margin: 30px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+        .history-header h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+    .back-btn {
+        background-color: #6c757d;
+        color: #fff;
+        padding: 10px 18px;
+        font-size: 15px;
+        font-weight: 500;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #dee2e6;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    th {
+        background-color: #f1f5f9;
+        font-weight: 700;
+    }
+
+    .no-record {
+        color: #888;
+        text-align: center;
+        padding: 20px;
+    }
+</style>
+
+<div class="history-section">
+    <div class="history-header">
+        <h2>Login History for @ViewBag.AgentName (@ViewBag.PNO)</h2>
+        <a href="@Url.Action("Index", "Agent")" class="back-btn">← Back</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Action</th>
+                <th>IP Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                int i = 1;
+                foreach (var log in Model)
+                {
+                    <tr>
+                        <td>@i</td>
+                        <td>@(log.Date.HasValue ? log.Date.Value.ToString("yyyy-MM-dd HH:mm:ss") : "")</td>
+                        <td>@log.Action</td>
+                        <td>@log.IPAddress</td>
+                    </tr>
+                    i++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="no-record">No login history found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

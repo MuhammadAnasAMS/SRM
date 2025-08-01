@@ -116,10 +116,13 @@
 <!-- Agent Table Rendering -->
 @foreach (var group in groupedAgents)
 {
+    var programMap = ViewBag.ProgramMap as Dictionary<int, string>;
+    var programId = group.FirstOrDefault()?.ProgramId;
     var programName = "No Program Assigned";
-    if (group.FirstOrDefault()?.ProgramId != null)
+
+    if (programId.HasValue && programMap != null && programMap.ContainsKey(programId.Value))
     {
-        programName = group.First().ProgramId + "";
+        programName = programMap[programId.Value];
     }
 
     <div class="card">

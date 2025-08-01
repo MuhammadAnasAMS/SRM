@@ -17,6 +17,8 @@ namespace PIA_Admin_Dashboard.Models
 
         public DbSet<Agent> Agents { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<History> HistoryLogs { get; set; }
         public virtual DbSet<Request_Master> Request_Master { get; set; }
     }
 }

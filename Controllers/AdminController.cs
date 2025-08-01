@@ -9,59 +9,11 @@ namespace PIA_Admin_Dashboard.Controllers
 {
     public class AdminController : Controller
     {
-        public ActionResult Dashboard(DateTime? fromDate, DateTime? toDate)
+        public ActionResult Dashboard()
         {
-            using (var db = new ApplicationDbContext())
-            {
-                // ViewBag for display
-                ViewBag.FromDate = fromDate?.ToString("dd-MMM-yyyy") ?? "Beginning";
-                ViewBag.ToDate = toDate?.ToString("dd-MMM-yyyy") ?? "Now";
-
-                // Filtered query
-                var requestQuery = db.Request_Master.AsQueryable();
-
-                if (fromDate.HasValue)
-                    requestQuery = requestQuery.Where(r => r.RequestDate >= fromDate);
-
-                if (toDate.HasValue)
-                    requestQuery = requestQuery.Where(r => r.RequestDate <= toDate);
-
-                var requests = requestQuery.ToList().Select(r => new RequestItem
-                {
-                    RequestID = r.RequestID,
-                    Subject = r.ReqSummary,
-                    RequestDate = r.RequestDate ?? DateTime.MinValue,
-                    ForwardTo = r.ForwardTo,
-                    Site = r.PArea,
-                    Status = r.Status,
-                    PendingSince = r.ForwardedDate.HasValue
-                                   ? (DateTime.Now - r.ForwardedDate.Value).Days + " days"
-                                   : "N/A"
-                }).ToList();
-
-                var stats = new DashboardStats
-                {
-                    Queue = requestQuery.Count(r => r.Status == "Queue"),
-                    Forwarded = requestQuery.Count(r => r.Status == "Forwarded"),
-                    Resolved = requestQuery.Count(r => r.Status == "Resolved"),
-                    Closed = requestQuery.Count(r => r.Status == "Closed")
-                };
-
-                var model = new DashboardViewModel
-                {
-                    Requests = requests,
-                    Stats = stats,
-                    OpenRequests = requestQuery.Count(r => r.Status == "Open"),
-                    PendingRequests = requestQuery.Count(r => r.Status == "Pending")
-                };
-
-                return View(model);
-            }
+            ViewBag.ScreenTitle = "Dashboard";
+            return View();
         }
-
-
-
-
         public ActionResult Departments()
         {
             ViewBag.ScreenTitle = "Departments Management";
@@ -76,10 +28,8 @@ namespace PIA_Admin_Dashboard.Controllers
 
         public ActionResult Complaints()
         {
-            ViewBag.ScreenTitle = "Complaints Handling";
             return View();
         }
-
         public ActionResult Logs()
         {
             var logs = new List<LogEntry>

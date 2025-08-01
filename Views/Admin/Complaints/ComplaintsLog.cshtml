@@ -1,0 +1,164 @@
+﻿@model PIA_Admin_Dashboard.Models.ComplaintsLog
+@{
+    ViewBag.Title = "Complaint Logs";
+    ViewBag.ScreenTitle = "Complaints Log";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Page Styling -->
+<style>
+
+    .dashboard-summary {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 15px;
+    }
+
+    .table thead {
+        background: #f8f9fa;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+    }
+
+    .form-group label {
+        font-weight: 500;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header">Service Request Logs</div>
+
+    <!-- Filters -->
+    <form method="get" class="row gy-3 gx-3 align-items-end mb-4">
+        <div class="col-md-2">
+            <label>Search Type</label>
+            <select name="searchBy" class="form-select">
+                <option value="RequestID" @(Model.SearchBy == "RequestID" ? "selected" : "")>Request ID</option>
+                <option value="Site" @(Model.SearchBy == "Site" ? "selected" : "")>Site / Location</option>
+                <option value="ReportedEmpID" @(Model.SearchBy == "ReportedEmpID" ? "selected" : "")>Reported Employee ID</option>
+                <option value="ForwardToEmpID" @(Model.SearchBy == "ForwardToEmpID" ? "selected" : "")>Forwarded To (Employee ID)</option>
+                <option value="ForwardToGroupID" @(Model.SearchBy == "ForwardToGroupID" ? "selected" : "")>Forwarded To (Group ID)</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label>Search</label>
+            <input type="text" name="searchValue" class="form-control" placeholder="Enter value" />
+        </div>
+
+
+        <div class="col-md-2">
+            <label>From Date</label>
+            <input type="date" name="fromDate" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label>To Date</label>
+            <input type="date" name="toDate" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label>Order By</label>
+            <select name="orderBy" class="form-select">
+                <option value="RequestID">Request ID</option>
+                <option value="RequestDate">Request Date</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label>Status</label>
+            <select name="status" class="form-select">
+                <option value="All">All</option>
+                <option value="Queue">Queue</option>
+                <option value="Forwarded">Forwarded</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Closed">Closed</option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-success w-100">Search</button>
+        </div>
+    </form>
+
+    <!-- Summary -->
+    <div class="dashboard-summary">
+        Showing <strong>@(Model.Requests?.Count ?? 0)</strong> requests
+        @if (ViewBag.FromDate != null && ViewBag.ToDate != null)
+        {
+            <span> | From <strong>@ViewBag.FromDate</strong> to <strong>@ViewBag.ToDate</strong></span>
+        }
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle text-center">
+            <thead>
+                <tr>
+                    <th>Request ID</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Forward To</th>
+                    <th>Site</th>
+                    <th>Status</th>
+                    <th>Pending Since</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Requests != null && Model.Requests.Any())
+                {
+                    foreach (var r in Model.Requests)
+                    {
+                <tr>
+                    <td>@r.RequestID</td>
+                    <td>@r.Subject</td>
+                    <td>@r.RequestDate.ToString("dd-MMM-yyyy hh:mm tt")</td>
+                    <td>@r.ForwardTo</td>
+                    <td>@r.Site</td>
+                    <td>
+                        @{
+                            var badgeClass = "bg-secondary"; // default fallback color
+
+                            if (!string.IsNullOrEmpty(r.Status))
+                            {
+                                var status = r.Status.Trim().ToUpper();
+
+                                if (status == "C") // Closed
+                                {
+                                    badgeClass = "bg-dark";
+                                }
+                                else if (status == "R") // Resolved
+                                {
+                                    badgeClass = "bg-success";
+                                }
+                                else if (status == "F") // Forwarded
+                                {
+                                    badgeClass = "bg-primary";
+                                }
+                                else if (status == "Q") // Queue
+                                {
+                                    badgeClass = "bg-warning text-dark";
+                                }
+                            }
+                        }
+                        <span class="badge @badgeClass">@r.Status</span>
+                    </td>
+
+
+                    <td>@r.PendingSince</td>
+                    <td>
+                        <a href="@Url.Action("ViewLog", "Complaints", new { id = r.RequestID })" class="btn btn-sm btn-info">
+                            <i class="fa fa-eye"></i> View
+                        </a>
+                    </td>
+                </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-muted">No requests found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

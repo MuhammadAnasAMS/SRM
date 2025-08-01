@@ -188,11 +188,10 @@
         }
 
         .card {
-            width: 100%;
             background: #fff;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 20px;
+            padding: 30px;
             margin-top: 20px;
             transition: all 0.3s;
         }
@@ -300,7 +299,7 @@
                             </a>
                         </li>
 
-                        <li><a href="/Admin/Complaints" class="@(ViewBag.ScreenTitle == "Complaints Handling" ? "active" : "")"><i class="fas fa-comment"></i> <span>Complaints</span></a></li>
+                        <li><a href="/Complaints/ComplaintsLog" class="@(ViewBag.ScreenTitle == "Complaints Handling" ? "active" : "")"><i class="fas fa-comment"></i> <span>Complaints</span></a></li>
                         <li><a href="/Admin/Logs" class="@(ViewBag.ScreenTitle == "System Logs" ? "active" : "")"><i class="fas fa-file-alt"></i> <span>Logs</span></a></li>
                     </ul>
                 </nav>
@@ -313,7 +312,7 @@
                     <span>@ViewBag.ScreenTitle</span>
                     <div class="navbar-right">
                         <img src="~/Content/profile.png" alt="Profile" class="profile-img" onerror="this.onerror=null; this.src='https://www.w3schools.com/howto/img_avatar.png';" />
-                        <a href="/Account/Logout" class="btn-theme">Logout</a>
+                        <a href="/Account/Login" class="btn-theme">Logout</a>
                     </div>
                 </div>
                 @RenderBody()

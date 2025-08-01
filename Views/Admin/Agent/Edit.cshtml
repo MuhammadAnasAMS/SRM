@@ -1,8 +1,193 @@
-﻿
+﻿@model PIA_Admin_Dashboard.Models.AgentViewModel
+
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Edit Agent";
+    ViewBag.ScreenTitle = "Agent Management";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Edit</h2>
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Edit Agent</span>
+        <a href="@Url.Action("Index", "Agent")" class="btn-primary" style="
+            background-color: #1d3c34;
+            padding: 6px 12px;
+            font-size: 14px;
+            text-decoration: none;
+            color: white;
+            border-radius: 6px;">
+            ← Back
+        </a>
+    </div>
 
+    @using (Html.BeginForm("Edit", "Agent", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.Agent.AgentId)
+
+        <div class="form-group">
+            <label>PNO (Read-only):</label>
+            @Html.TextBoxFor(m => m.Agent.PNO, new { @class = "styled-input", @readonly = "readonly" })
+        </div>
+
+        <div class="form-group">
+            <label>Name:</label>
+            @Html.TextBoxFor(m => m.Agent.Name, new { @class = "styled-input", placeholder = "Full Name", required = "required" })
+        </div>
+
+        <div class="form-group">
+            <label>Email:</label>
+            @Html.TextBoxFor(m => m.Agent.Email, new { @class = "styled-input", placeholder = "Email Address", required = "required", type = "email" })
+        </div>
+
+        <div class="form-group">
+            <label>Mobile:</label>
+            @Html.TextBoxFor(m => m.Agent.Mobile, new { @class = "styled-input", placeholder = "Mobile Number" })
+        </div>
+
+        <div class="form-group">
+            <label>Status:</label>
+            @Html.DropDownListFor(m => m.Agent.Status,
+                new SelectList(
+                    new[] {
+                        new { Value = "A", Text = "Active" },
+                        new { Value = "C", Text = "Closed" }
+                    },
+                    "Value", "Text",
+                    Model.Agent.Status
+                ),
+                "-- Select Status --",
+                new { @class = "styled-input", required = "required" }
+            )
+        </div>
+
+        <div class="form-group">
+            <label>Assign Role:</label>
+            @Html.DropDownListFor(m => m.Agent.RoleId, new SelectList(Model.Roles, "Value", "Text"), "-- Select Role --", new { @class = "styled-input" })
+        </div>
+
+        <div class="form-group">
+            <label>Work Area:</label>
+            <div style="margin-bottom: 10px;">
+                <label>
+                    <input type="radio" name="workAreaOption" value="all" @(string.IsNullOrEmpty(Model.Agent.WorkArea) ? "checked" : "") />
+                    All
+                </label>
+                <label style="margin-left: 20px;">
+                    <input type="radio" name="workAreaOption" value="custom" @(string.IsNullOrEmpty(Model.Agent.WorkArea) ? "" : "checked") />
+                    Custom
+                </label>
+            </div>
+
+            <select id="workAreaSelect" name="Agent_WorkArea" class="enhanced-multiselect" multiple style="display:@(string.IsNullOrEmpty(Model.Agent.WorkArea) ? "none" : "block");">
+                @{
+                    var selectedValues = (Model.Agent.WorkArea ?? "").Split(',').ToList();
+                }
+                @foreach (var location in Model.Locations)
+                {
+                    <option value="@location.Value" @(selectedValues.Contains(location.Value) ? "selected" : "")>@location.Text</option>
+                }
+            </select>
+        </div>
+
+        <button type="submit" class="submit-button">💾 Save Changes</button>
+    }
+</div>
+
+<style>
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 16px;
+    }
+
+        .form-group label {
+            font-size: 15px;
+            margin-bottom: 4px;
+            color: #333;
+            font-weight: 500;
+        }
+
+    .styled-input {
+        width: 100%;
+        height: 40px;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+        background-color: #fafafa;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+        .styled-input:focus {
+            border-color: #1d3c34;
+            background-color: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(29, 60, 52, 0.15);
+        }
+
+    .submit-button {
+        margin-top: 20px;
+        background-color: #1d3c34;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        max-width: 400px;
+        transition: background-color 0.3s ease;
+    }
+
+        .submit-button:hover {
+            background-color: #145c4b;
+        }
+
+    .card {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        padding: 25px;
+        background: white;
+        border-radius: 10px;
+    }
+
+    .card-header {
+        font-size: 18px;
+        font-weight: 600;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 15px;
+    }
+
+    .enhanced-multiselect {
+        min-height: 120px;
+        height: auto;
+        background-color: #f8f8f8;
+        border: 1px solid #ccc;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 14px;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+        .enhanced-multiselect option {
+            padding: 6px;
+        }
+</style>
+
+<script>
+    // Toggle WorkArea select visibility
+    document.querySelectorAll("input[name='workAreaOption']").forEach(radio => {
+        radio.addEventListener("change", function () {
+            const select = document.getElementById("workAreaSelect");
+            select.style.display = this.value === "custom" ? "block" : "none";
+        });
+    });
+</script>

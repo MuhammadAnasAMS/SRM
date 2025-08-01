@@ -1,4 +1,4 @@
-﻿@model PIA_Admin_Dashboard.Models.Agent
+﻿@model PIA_Admin_Dashboard.Models.AgentViewModel
 
 @{
     ViewBag.Title = "Add New Agent";
@@ -13,7 +13,9 @@
             background-color: #1d3c34;
             padding: 6px 12px;
             font-size: 14px;
-            text-decoration: none;">
+            text-decoration: none;
+            color: white;
+            border-radius: 6px;">
             ← Back
         </a>
     </div>
@@ -22,26 +24,26 @@
     {
         @Html.AntiForgeryToken()
 
-        <!-- Employee Type -->
         <div class="form-group">
             <label>Employee Type:</label>
-            <select id="employeeType" name="EmployeeType" class="styled-input" onchange="toggleEmployeeFields()" style="margin-bottom: 20px;">
+            <select id="employeeType" name="EmployeeType" class="styled-input" onchange="toggleEmployeeFields()">
                 <option value="">-- Select Employee Type --</option>
                 <option value="Regular">Regular Employee (PNO)</option>
                 <option value="DailyWages">Daily Wages (Manual Entry)</option>
             </select>
         </div>
 
-        <!-- PNO Section -->
+        <!-- PNO Lookup -->
         <div id="regularEmployeeSection" style="display: none;">
-            <label>Employee PNO:</label>
-            <input type="text" id="pnoInput" name="PNO" class="styled-input" placeholder="Enter PNO" />
-
-            <div style="display: flex; justify-content: center; margin-top: 10px;">
-                <button type="button" onclick="fetchEmployee()" class="submit-button">🔍 Fetch Employee</button>
+            <div class="form-group">
+                <label>Employee PNO:</label>
+                @Html.TextBoxFor(m => m.Agent.PNO, new { @class = "styled-input", id = "pnoInput", placeholder = "Enter PNO" })
             </div>
 
-            <p id="fetchStatus" style="color: red; font-weight: bold; text-align: center; margin-top: 10px;"></p>
+            <div style="text-align: center;">
+                <button type="button" onclick="fetchEmployee()" class="submit-button">🔍 Fetch Employee</button>
+                <p id="fetchStatus" style="color: red; font-weight: bold; margin-top: 10px;"></p>
+            </div>
         </div>
 
         <!-- Image Placeholder -->
@@ -50,44 +52,174 @@
                  src="https://www.w3schools.com/howto/img_avatar.png"
                  alt="Profile Picture"
                  style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid #1d3c34;" />
-
-            <div style="margin-top: 10px;">
-                <input type="text" id="ImageUrl" class="styled-input" placeholder="Optional image URL..." />
-            </div>
+            <input type="hidden" id="ImageUrl" name="ImageUrl" />
         </div>
 
-        <!-- Manual/Shared Fields -->
-        <div id="manualEntrySection" style="display: none; flex-direction: column; gap: 20px; padding: 0 15px;">
-            <div class="form-group">
-                <label>Name:</label>
-                @Html.TextBoxFor(m => m.Name, new { @class = "styled-input", required = "required", id = "Name", placeholder = "Full Name" })
-            </div>
+        <!-- Manual Entry or Filled -->
+<div id="manualEntrySection" style="display: none; flex-direction: column; gap: 20px; padding: 0 15px; align-items: center;">
+    <div class="form-group">
+        <label>Name:</label>
+        @Html.TextBoxFor(m => m.Agent.Name, new { @class = "styled-input", id = "Name", placeholder = "Full Name", required = "required" })
+    </div>
 
-            <div class="form-group">
-                <label>Email:</label>
-                @Html.TextBoxFor(m => m.Email, new { @class = "styled-input", type = "email", required = "required", id = "Email", placeholder = "Email Address" })
-            </div>
+    <div class="form-group">
+        <label>Email:</label>
+        @Html.TextBoxFor(m => m.Agent.Email, new { @class = "styled-input", id = "Email", type = "email", placeholder = "Email Address", required = "required" })
+    </div>
 
-            <div class="form-group">
-                <label>Mobile:</label>
-                @Html.TextBoxFor(m => m.Mobile, new { @class = "styled-input", id = "Mobile", placeholder = "Mobile Number" })
-            </div>
+    <div class="form-group">
+        <label>Mobile:</label>
+        @Html.TextBoxFor(m => m.Agent.Mobile, new { @class = "styled-input", id = "Mobile", placeholder = "Mobile Number" })
+    </div>
 
-            <div class="form-group">
-                <label>Designation:</label>
-                <input type="text" id="Designation" class="styled-input" placeholder="Designation" />
-            </div>
+    <div class="form-group">
+        <label>Designation:</label>
+        @Html.TextBox("Designation", null, new { @class = "styled-input", id = "Designation", placeholder = "Designation" })
+    </div>
 
-            <div class="form-group">
-                <label>Status:</label>
-                @Html.DropDownListFor(m => m.Status, new SelectList(new[] { "Online", "Offline" }), "-- Select Status --", new { @class = "styled-input", required = "required" })
-            </div>
+    <div class="form-group">
+        <label>Status:</label>
+        @Html.DropDownListFor(m => m.Agent.Status,
+            new SelectList(
+                new[] {
+                    new { Value = "A", Text = "Active" },
+                    new { Value = "C", Text = "Closed" }
+                },
+                "Value", "Text"
+            ),
+            "-- Select Status --",
+            new { @class = "styled-input", required = "required" }
+        )
+    </div>
 
-            <button type="submit" class="submit-button">➕ Add Agent</button>
+    <div class="form-group">
+        <label>User Type:</label>
+        <div style="display: flex; gap: 20px;">
+            <label>
+                <input type="radio" name="UserType" value="I" onclick="toggleUserType()" checked />
+                Individual
+            </label>
+            <label>
+                <input type="radio" name="UserType" value="G" onclick="toggleUserType()" />
+                Group
+            </label>
         </div>
+    </div>
+
+    <div class="form-group">
+        <label>Assign Role:</label>
+        @Html.DropDownListFor(m => m.Agent.RoleId, new SelectList(Model.Roles, "Value", "Text"), "-- Select Role --", new { @class = "styled-input" })
+    </div>
+
+    <div class="form-group">
+        <label>Assign WorkArea:</label>
+        @Html.ListBox("Agent_WorkArea", new MultiSelectList(Model.Locations, "Value", "Text"), new { @class = "styled-input enhanced-multiselect", multiple = "multiple" })
+    </div>
+
+    <div class="form-group" id="groupDropdownSection" style="display: none;">
+        <label>Group Options (if any):</label>
+        <select id="GroupOption" name="GroupOption" class="styled-input">
+            <option value="">-- Select Group Option --</option>
+            <!-- You will populate this dynamically later -->
+        </select>
+    </div>
+
+
+
+    <button type="submit" class="submit-button">➕ Add Agent</button>
+</div>
+    }
+</div>
+
+<style>
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 16px;
     }
 
-</div>
+        .form-group label {
+            font-size: 15px;
+            margin-bottom: 4px;
+            color: #333;
+            font-weight: 500;
+        }
+
+    .styled-input {
+        width: 100%;
+        height: 40px;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+        background-color: #fafafa;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+        .styled-input:focus {
+            border-color: #1d3c34;
+            background-color: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(29, 60, 52, 0.15);
+        }
+
+    .submit-button {
+        margin-top: 20px;
+        background-color: #1d3c34;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        max-width: 400px;
+        transition: background-color 0.3s ease;
+    }
+
+        .submit-button:hover {
+            background-color: #145c4b;
+        }
+
+    .card {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        padding: 25px;
+        background: white;
+        border-radius: 10px;
+    }
+
+    .card-header {
+        font-size: 18px;
+        font-weight: 600;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 15px;
+    }
+
+    .enhanced-multiselect {
+        min-height: 120px;
+        height: auto;
+        background-color: #f8f8f8;
+        border: 1px solid #ccc;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 14px;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+        .enhanced-multiselect option {
+            padding: 6px;
+        }
+
+</style>
+
 <script>
     function toggleEmployeeFields() {
         const type = document.getElementById("employeeType").value;
@@ -115,7 +247,7 @@
 
         document.getElementById("fetchStatus").innerText = "Fetching...";
 
-        fetch('/User/FetchEmployee?pno=' + encodeURIComponent(pno))
+        fetch(`/Agent/FetchEmployee?pno=${encodeURIComponent(pno)}`)
             .then(response => response.json())
             .then(data => {
                 if (data.exists) {
@@ -126,12 +258,12 @@
                 if (data.success && data.user) {
                     document.getElementById("fetchStatus").innerText = "Employee fetched successfully.";
 
-                    // Populate form fields
                     document.getElementById("Name").value = data.user.name || '';
                     document.getElementById("Email").value = data.user.email || '';
                     document.getElementById("Mobile").value = data.user.phone_Num || '';
                     document.getElementById("Designation").value = data.user.emp_designation || '';
                     document.getElementById("employeeImage").src = data.user.image_url || "https://www.w3schools.com/howto/img_avatar.png";
+                    document.getElementById("ImageUrl").value = data.user.image_url || '';
 
                     document.getElementById("manualEntrySection").style.display = "flex";
                 } else {
@@ -142,5 +274,11 @@
                 console.error(err);
                 document.getElementById("fetchStatus").innerText = "Error fetching employee.";
             });
+    }
+</script>
+<script>
+    function toggleUserType() {
+        const isGroup = document.querySelector('input[name="UserType"]:checked').value === "G";
+        document.getElementById("groupDropdownSection").style.display = isGroup ? "block" : "none";
     }
 </script>

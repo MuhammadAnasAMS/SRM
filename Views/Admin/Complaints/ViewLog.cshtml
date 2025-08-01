@@ -1,0 +1,45 @@
+﻿@model PIA_Admin_Dashboard.Models.Request_Master
+
+@{
+    ViewBag.Title = "Request Details";
+    ViewBag.ScreenTitle = "Request Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Request Details (ID: @Model.RequestID)</span>
+            <a href="@Url.Action("ComplaintsLog", "Complaints")" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Back to Log
+            </a>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <tbody>
+                    <tr><th>Subject</th><td>@Model.ReqSummary</td></tr>
+                    <tr><th>Requested By</th><td>@Model.RequestLogBy</td></tr>
+                    <tr><th>Requested For</th><td>@Model.RequestFor</td></tr>
+                    <tr><th>Requested IP Address</th><td>@Model.RequestedIPAddress</td></tr>
+                    <tr><th>Request Date</th><td>@Model.RequestDate</td></tr>
+                    <tr><th>PArea</th><td>@Model.PArea</td></tr>
+                    <tr><th>Location</th><td>@Model.Location</td></tr>
+                    <tr><th>Priority</th><td>@Model.Priority</td></tr>
+                    <tr><th>Status</th><td>@Model.Status</td></tr>
+                    <tr><th>Forwarded to Type</th><td>@Model.ForwardToType</td></tr>
+                    <tr><th>Details</th><td>@Html.Raw(Model.ReqDetails)</td></tr>
+                    <tr><th>Requested CloseBy</th><td>@Model.ReqCloseBy</td></tr>
+                    <tr><th>Forwarded To</th><td>@Model.ForwardTo</td></tr>
+                    <tr><th>Forwarded By</th><td>@Model.ForwardBy</td></tr>
+                    <tr><th>Forwarded Remarks</th><td>@Model.ForwardedRemarks</td></tr>
+                    <tr><th>Request Close Date</th><td>@Model.ReqCloseDate</td></tr>
+                    <tr><th>Resolved By</th><td>@Model.ReqResolveBy</td></tr>
+                    <tr><th>Resolved Date</th><td>@Model.ReqResolveDate</td></tr>
+                    <tr><th>UID</th><td>@Model.UID</td></tr>
+                    <tr><th>Initial Request</th><td>@Model.InitialRequest</td></tr>
+                    <tr><th>Program ID</th><td>@Model.ProgramId</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
