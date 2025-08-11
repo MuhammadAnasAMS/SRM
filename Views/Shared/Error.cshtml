@@ -1,13 +1,370 @@
-﻿<!DOCTYPE html>
-<html>
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Error</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - Pakistan International Airlines</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        .bottom-info {
+            text-align: center;
+            color: #2c5530;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 40px 20px 20px;
+            opacity: 0.8;
+        }
+
+        footer {
+            text-align: center;
+            color: #2c5530;
+            font-size: 12px;
+            padding: 20px;
+            border-top: 1px solid rgba(44,85,48,0.1);
+            width: 100%;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9f8 50%, #2c5530 100%) !important;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            z-index: 9999;
+        }
+
+        .background-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            background-image: radial-gradient(circle at 20% 20%, rgba(45,90,45,0.2) 1px, transparent 1px), radial-gradient(circle at 80% 80%, rgba(206,172,55,0.2) 1px, transparent 1px);
+            background-size: 100px 100px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @@keyframes float {
+            0%, 100% {
+                transform: translateY(0px) translateX(0px);
+            }
+
+            33% {
+                transform: translateY(-10px) translateX(5px);
+            }
+
+            66% {
+                transform: translateY(5px) translateX(-3px);
+            }
+        }
+
+        .airplane {
+            position: absolute;
+            color: rgba(45,90,45,0.15);
+            font-size: 24px;
+            animation: fly 15s linear infinite;
+        }
+
+            .airplane:nth-child(1) {
+                top: 20%;
+                animation-delay: 0s;
+                animation-duration: 18s;
+            }
+
+            .airplane:nth-child(2) {
+                top: 60%;
+                animation-delay: -8s;
+                animation-duration: 22s;
+            }
+
+            .airplane:nth-child(3) {
+                top: 80%;
+                animation-delay: -15s;
+                animation-duration: 20s;
+            }
+
+        @@keyframes fly {
+            0% {
+                transform: translateX(-100px) translateY(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.8;
+            }
+
+            90% {
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translateX(calc(100vw + 100px)) translateY(-20px);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            text-align: center;
+            color: #2c5530;
+            z-index: 10;
+            max-width: 600px;
+            padding: 40px 20px;
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.2s forwards;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            color: #2c5530;
+            margin-bottom: 8px;
+        }
+
+        .logo-subtitle {
+            font-size: 12px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            color: #CEAC37;
+            text-transform: uppercase;
+        }
+
+        .error-code {
+            font-size: 120px;
+            font-weight: 100;
+            line-height: 1;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #2c5530, #CEAC37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.4s forwards, pulse 3s ease-in-out 2s infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+        }
+
+        .message {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.6s forwards;
+            color: #2c5530;
+        }
+
+        .submessage {
+            font-size: 16px;
+            color: #2c5530;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.8s forwards;
+            line-height: 1.6;
+        }
+
+        .actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1s forwards;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #2c5530, #4a7c59);
+            color: white;
+            box-shadow: 0 4px 15px rgba(44,85,48,0.3);
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(44,85,48,0.4);
+                background: linear-gradient(45deg, #355a35, #5a8c69);
+            }
+
+        .btn-secondary {
+            background: transparent;
+            color: #CEAC37;
+            border: 2px solid #CEAC37;
+        }
+
+            .btn-secondary:hover {
+                background: rgba(206,172,55,0.1);
+                border-color: #CEAC37;
+                color: #2c5530;
+                transform: translateY(-2px);
+            }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transition: all 0.5s ease;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .plane-icon {
+            position: absolute;
+            top: -40px;
+            right: -20px;
+            font-size: 40px;
+            color: rgba(206,172,55,0.3);
+            transform: rotate(15deg);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @@media (max-width: 768px) {
+            .error-code {
+                font-size: 80px;
+            }
+
+            .message {
+                font-size: 20px;
+            }
+
+            .submessage {
+                font-size: 14px;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                padding: 12px 28px;
+                font-size: 14px;
+                min-width: 200px;
+            }
+
+            .plane-icon {
+                font-size: 30px;
+                top: -30px;
+                right: -15px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <hgroup>
-        <h1>Error.</h1>
-        <h2>An error occurred while processing your request.</h2>
-    </hgroup>
+    <div class="background-pattern"></div>
+
+    <!-- Flying airplanes -->
+    <div class="airplane">✈</div>
+    <div class="airplane">✈</div>
+    <div class="airplane">✈</div>
+
+    <div class="container">
+        <div class="plane-icon">✈</div>
+
+        <div class="logo">
+            <div class="logo-text">PIA</div>
+            <div class="logo-subtitle">Pakistan International Airlines</div>
+        </div>
+
+        <div class="error-code">404</div>
+
+        <h1 class="message">Flight Path Not Found</h1>
+
+        <p class="submessage">
+            The page you're looking for seems to have taken a different route.<br>
+            Let us help you get back on course.
+        </p>
+
+        <div class="actions">
+            <a href="/" class="btn btn-primary">Return to Homepage</a>
+            <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
+        </div>
+    </div>
+
+    <div class="bottom-info">
+        If you believe this is an error, contact your system administrator or return to the previous page.<br />
+        This portal is intended for authorized personnel only.
+    </div>
+
+    <footer>
+        &copy; 2025 - PIA SRM Portal
+    </footer>
 </body>
 </html>

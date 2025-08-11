@@ -1,0 +1,290 @@
+﻿@model IEnumerable<PIA_Admin_Dashboard.Controllers.GroupMember>
+@{
+    ViewBag.Title = "Group Members";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var group = ViewBag.Group as PIA_Admin_Dashboard.Models.Group;
+}
+
+<style>
+    .department-section {
+        width: 95%;
+        margin: 30px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .group-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        border-left: 4px solid #007bff;
+    }
+
+        .group-info h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+        }
+
+        .group-info .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+    }
+
+        .info-item strong {
+            color: #343a40;
+            margin-right: 8px;
+        }
+
+    .back-btn {
+        background-color: #6c757d;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        padding: 12px 14px;
+        border-bottom: 1px solid #dee2e6;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    th {
+        background-color: #f1f5f9;
+        font-weight: 700;
+        color: #495057;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+    .status-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-active {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .status-closed {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .no-members {
+        text-align: center;
+        padding: 40px;
+        color: #6c757d;
+    }
+
+        .no-members i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+    .member-count {
+        background-color: #17a2b8;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+
+    .alert {
+        padding: 12px 20px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    .alert-info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header">@ViewBag.ScreenTitle</div>
+
+    <a href="@Url.Action("Index", "Groups")" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Groups
+    </a>
+
+    <!-- Group Information -->
+    @if (group != null)
+    {
+        <div class="group-info">
+            <h4>Group Information</h4>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Group Name:</strong> @group.GroupName
+                    <span class="member-count">@(Model != null ? Model.Count() : 0) Members</span>
+                </div>
+                <div class="info-item">
+                    <strong>Program:</strong>
+                    @if (group.Program != null)
+                    {
+                        @group.Program.Name
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not Assigned</span>
+                    }
+                </div>
+                <div class="info-item">
+                    <strong>Manager:</strong>
+                    @if (!string.IsNullOrEmpty(group.ManagerName))
+                    {
+                        @group.ManagerName <small class="text-muted">(@group.ManagerPno)</small>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No Manager Assigned</span>
+                    }
+                </div>
+                <div class="info-item">
+                    <strong>Group ID:</strong> @group.Gid
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Members List -->
+    @if (Model != null && Model.Any())
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>PNO</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Work Area</th>
+                    <th>Status</th>
+                    <th>Last Login</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int counter = 1;
+                }
+                @foreach (var member in Model)
+                {
+                    <tr>
+                        <td>@counter</td>
+                        <td><strong>@member.Pno</strong></td>
+                        <td>@member.Name</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(member.Email))
+                            {
+                                <a href="mailto:@member.Email">@member.Email</a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not Available</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(member.Mobile))
+                            {
+                                @member.Mobile
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not Available</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(member.WorkArea))
+                            {
+                                @member.WorkArea
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not Available</span>
+                            }
+                        </td>
+                        <td>
+                            @if (member.Status == "A")
+                            {
+                                <span class="status-badge status-active">Active</span>
+                            }
+                            else if (member.Status == "C")
+                            {
+                                <span class="status-badge status-closed">Closed</span>
+                            }
+                            else
+                            {
+                                <span class="status-badge">@(member.Status ?? "Unknown")</span>
+                            }
+                        </td>
+                        <td>
+                            @if (member.LastLogin.HasValue)
+                            {
+                                @member.LastLogin.Value.ToString("dd/MM/yyyy hh:mm tt")
+                            }
+                            else
+                            {
+                                <span class="text-muted">Never</span>
+                            }
+                        </td>
+                    </tr>
+                    counter++;
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="no-members">
+            <i class="fas fa-users"></i>
+            <h5>No Members Found</h5>
+            <p class="text-muted">This group currently has no members assigned.</p>
+        </div>
+    }
+</div>
+
+<script>
+    // Add any additional JavaScript functionality here if needed
+    document.addEventListener('DOMContentLoaded', function() {
+        // Optional: Add tooltips or other interactive elements
+        console.log('Group members page loaded');
+    });
+</script>

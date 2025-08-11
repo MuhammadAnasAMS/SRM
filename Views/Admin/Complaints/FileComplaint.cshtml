@@ -1,0 +1,173 @@
+﻿@model PIA_Admin_Dashboard.Models.ComplaintFormViewModel
+
+@{
+    ViewBag.Title = "File Complaint";
+    ViewBag.ScreenTitle = "File Complaint";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Complaint Form</h5>
+        <a href="@Url.Action("ComplaintsLog", "Complaints")" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> Back to Log
+        </a>
+    </div>
+
+    <div class="card-body">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+
+        @using (Html.BeginForm("FileComplaint", "Complaints", FormMethod.Post, new { @id = "complaintForm" }))
+        {
+            <!-- Employee ID Input -->
+            <div class="form-group">
+                @Html.LabelFor(m => m.pno, "Reported Employee ID")
+                @Html.TextBoxFor(m => m.pno, new { @class = "form-control", placeholder = "Enter Reported Employee ID" })
+                <button type="submit" name="action" value="fetch" class="btn btn-info mt-2">Fetch Details</button>
+            </div>
+
+            if (Model != null && Model.IsDetailsFetched)
+            {
+                <hr />
+
+                <!-- Auto-Filled Details -->
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Name)
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Email)
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Mobile)
+                    @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("Room No")
+                    @Html.TextBoxFor(m => m.ProgramName, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("Work Area")
+                    @Html.TextBoxFor(m => m.Location, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+
+                <!-- IP Address -->
+                <div class="form-group">
+                    @Html.Label("IP Address")
+
+                    @{
+                        var ipParts = (Model.RequestedIPAddress ?? "0.0.0.0").Split('.');
+                        var ip1 = ipParts.Length > 0 ? ipParts[0] : "";
+                        var ip2 = ipParts.Length > 1 ? ipParts[1] : "";
+                        var ip3 = ipParts.Length > 2 ? ipParts[2] : "";
+                        var ip4 = ipParts.Length > 3 ? ipParts[3] : "";
+                    }
+
+                    <div class="d-flex align-items-center gap-1">
+                        <input type="text" id="ip1" maxlength="3" class="form-control text-center mx-1 ip-part" style="width:60px;" value="@ip1" readonly />
+                        <span>.</span>
+                        <input type="text" id="ip2" maxlength="3" class="form-control text-center mx-1 ip-part" style="width:60px;" value="@ip2" readonly />
+                        <span>.</span>
+                        <input type="text" id="ip3" maxlength="3" class="form-control text-center mx-1 ip-part" style="width:60px;" value="@ip3" readonly />
+                        <span>.</span>
+                        <input type="text" id="ip4" maxlength="3" class="form-control text-center mx-1 ip-part" style="width:60px;" value="@ip4" readonly />
+                    </div>
+
+                    @Html.HiddenFor(m => m.RequestedIPAddress)
+                </div>
+
+                <!-- Priority Selection -->
+                <div class="form-group">
+                    <label>Priority</label>
+                    <div>
+                        @foreach (var priority in new[] { "Critical", "Urgent", "Important", "Normal" })
+                        {
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Priority" id="priority_@priority" value="@priority" @(Model.Priority == priority ? "checked" : "") />
+                                <label class="form-check-label" for="priority_@priority">
+                                    @priority
+
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Problem Area Checkboxes -->
+                <div class="form-group">
+                    <label>Problem Area</label>
+                    <div>
+                        @{
+                            var problemAreaOptions = new Dictionary<string, string>
+                            {
+                                { "HW", "Hardware" },
+                                { "SW", "Software" },
+                                { "INT", "Internet" },
+                                { "NW", "Network" },
+                                { "O", "Other" }
+                            };
+
+
+                            foreach (var option in problemAreaOptions)
+                            {
+                                var isChecked = Model.ProblemAreas?.Contains(option.Key) == true;
+
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox"
+                                   name="ProblemAreas"
+                                   id="problem_@option.Key"
+                                   value="@option.Key"
+                                   @(isChecked ? "checked" : "") />
+                            <label class="form-check-label" for="problem_@option.Key">
+                                @option.Value
+                            </label>
+                        </div>
+                                }
+                            }
+                    </div>
+                </div>
+
+
+                <hr />
+
+                <!-- Complaint Summary and Details -->
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ReqSummary, "Subject")
+                    @Html.TextBoxFor(m => m.ReqSummary, new { @class = "form-control", placeholder = "Subject of complaint" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ReqDetails, "Complaint Details")
+                    @Html.TextAreaFor(m => m.ReqDetails, new { @class = "form-control", rows = 4, placeholder = "Describe your complaint" })
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" name="action" value="submit" class="btn btn-success mt-3">
+                    <i class="fas fa-paper-plane"></i> Submit Complaint
+                </button>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById("complaintForm").addEventListener("submit", function () {
+            const ip = [
+                document.getElementById("ip1").value,
+                document.getElementById("ip2").value,
+                document.getElementById("ip3").value,
+                document.getElementById("ip4").value
+            ].join('.');
+            document.getElementById("RequestedIPAddress").value = ip;
+        });
+    </script>
+}

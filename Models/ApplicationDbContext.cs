@@ -15,6 +15,7 @@ namespace PIA_Admin_Dashboard.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Program> Programs { get; set; }
 
+        public DbSet<Group> Groups { get; set; }
         public DbSet<Agent> Agents { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Role> Roles { get; set; }

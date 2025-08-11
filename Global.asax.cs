@@ -19,5 +19,21 @@ namespace PIA_Admin_Dashboard
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
+
+
+        protected void Application_Error()
+        {
+            var ex = Server.GetLastError();
+            var httpException = ex as HttpException;
+
+            if (httpException != null && httpException.GetHttpCode() == 404)
+            {
+                Response.Clear();
+                Server.ClearError();
+                Response.Redirect("~/Error/PageNotFound");
+            }
+        }
+
+
     }
 }

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using PIA_Admin_Dashboard.Models;
+using PIA_Admin_Dashboard.Models; 
+
 
 namespace PIA_Admin_Dashboard.Controllers
 {
@@ -100,15 +101,6 @@ namespace PIA_Admin_Dashboard.Controllers
                         : "N/A"
                     }).ToList();
 
-                // Stats section
-                model.Stats = new ComplaintStats
-                {
-                    Queue = db.Request_Master.Count(r => r.Status == "Q"),
-                    Forwarded = db.Request_Master.Count(r => r.Status == "F"),
-                    Resolved = db.Request_Master.Count(r => r.Status == "R"),
-                    Closed = db.Request_Master.Count(r => r.Status == "C")
-                };
-
                 // ViewBag or model filters (optional for UI display)
                 model.SearchBy = searchBy;
                 model.SearchValue = searchValue;
@@ -130,8 +122,179 @@ namespace PIA_Admin_Dashboard.Controllers
                     return HttpNotFound();
                 }
 
-                return View("~/Views/Admin/Complaints/ViewLog.cshtml", request); // ViewLog.cshtml
+                // Fetch the Agent email using RequestFor (which is Pno)
+                var agent = db.Agents.FirstOrDefault(a => a.PNO == request.RequestFor);
+                request.Email = agent?.Email ?? "Email not found";
+                ViewBag.Groups = db.Groups.ToList();
+                ViewBag.Agents = db.Agents.ToList();
+
+                return View("~/Views/Admin/Complaints/ViewLog.cshtml", request);
             }
         }
+
+        [HttpPost]
+        public ActionResult ForwardRequest(int RequestID, string ForwardType, string ForwardToAgent, int? ForwardToGroup)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                var request = db.Request_Master.FirstOrDefault(r => r.RequestID == RequestID);
+                if (request == null) return HttpNotFound();
+
+                string forwardedTo = "";
+                string forwardedToDisplayName = "";
+                string forwardTypeCode = ""; // I = Individual, G = Group
+
+                if (ForwardType == "Group" && ForwardToGroup.HasValue)
+                {
+                    var group = db.Groups.FirstOrDefault(g => g.Gid == ForwardToGroup.Value);
+                    forwardedTo = group?.Gid.ToString();       // store ID in DB
+                    forwardedToDisplayName = group?.GroupName; // store name in log
+                    forwardTypeCode = "G";
+                }
+                else if (ForwardType == "Individual" && !string.IsNullOrEmpty(ForwardToAgent))
+                {
+                    var agent = db.Agents.FirstOrDefault(a => a.PNO == ForwardToAgent);
+                    forwardedTo = agent?.PNO;    // store PNO in DB
+                    forwardedToDisplayName = agent?.Name; // store name in log
+                    forwardTypeCode = "I";
+                }
+
+                string forwardedBy = User.Identity.Name;
+
+                // Append to ReqDetails with display name
+                string logEntry = $"<hr>{DateTime.Now:dd-MMM-yyyy}&nbsp;{DateTime.Now:hh:mm tt} forward to {forwardedToDisplayName} by {forwardedBy}";
+                request.ReqDetails = (request.ReqDetails ?? "") + logEntry;
+
+                // Update DB fields
+                request.ForwardToType = forwardTypeCode;
+                request.ForwardTo = forwardedTo;
+                request.ForwardBy = forwardedBy;
+                request.ForwardedDate = DateTime.Now;
+                request.Status = "F";
+
+                db.SaveChanges();
+
+                return RedirectToAction("ComplaintsLog");
+            }
+        }
+        [HttpPost]
+        public ActionResult TakeOwnership(int requestId)
+        {
+            string currentUserPNO = User.Identity.Name;
+
+            using (var db = new ApplicationDbContext())
+            {
+                var request = db.Request_Master.FirstOrDefault(r => r.RequestID == requestId);
+                if (request != null)
+                {
+                    request.Ownership = currentUserPNO;
+                    request.Status = "P";
+                    db.SaveChanges();
+                }
+            }
+
+            TempData["SuccessMessage"] = "You have taken ownership of the request.";
+            return RedirectToAction("ComplaintsLog");
+        }
+
+        [HttpGet]
+        public ActionResult FileComplaint()
+        {
+
+            return View("~/Views/Admin/Complaints/FileComplaint.cshtml", new ComplaintFormViewModel());
+        }
+
+            [HttpPost]
+            public ActionResult FileComplaint(ComplaintFormViewModel model, string action)
+            {
+                using (var db = new ApplicationDbContext())
+                {
+                if (action == "fetch")
+                {
+                    model.Name = model.Email = model.Mobile = model.ProgramName = model.Location = null;
+
+                    var agent = db.Agents.FirstOrDefault(a => a.PNO == model.pno);
+                    if (agent != null)
+                    {
+                        model.Name = agent.Name;
+                        model.Email = agent.Email;
+                        model.Mobile = agent.Mobile;
+
+                        var program = db.Programs.FirstOrDefault(p => p.ProgramId == agent.ProgramId);
+                        model.ProgramName = program?.Name;
+
+                        var firstWorkArea = (agent.WorkArea ?? "").Split(',').FirstOrDefault()?.Trim();
+
+                        if (int.TryParse(firstWorkArea, out int workAreaId))
+                        {
+                            var location = db.Locations.FirstOrDefault(l => l.Sno == workAreaId);
+                            model.Location = location?.LocationID;
+                        }
+                        else
+                        {
+                            model.Location = null;
+                        }
+                        model.RequestedIPAddress = agent.LastLoginIP;
+
+
+                        model.IsDetailsFetched = true;
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Employee ID not found.");
+                        model.IsDetailsFetched = false;
+                    }
+
+                    // ⚠️ Clear old ModelState so new values appear in form fields
+                    ModelState.Clear();
+
+                    return View("~/Views/Admin/Complaints/FileComplaint.cshtml", model);
+                }
+
+
+                // Submit complaint
+                if (action == "submit" && ModelState.IsValid)
+                {
+                    int priorityValue = 4; // Default to Normal
+
+                    switch (model.Priority)
+                    {
+                        case "Critical":
+                            priorityValue = 1;
+                            break;
+                        case "Urgent":
+                            priorityValue = 2;
+                            break;
+                        case "Important":
+                            priorityValue = 3;
+                            break;
+                        case "Normal":
+                            priorityValue = 4;
+                            break;
+                    }
+
+                    var request = new Request_Master
+                    {
+                        ReqSummary = model.ReqSummary,
+                        ReqDetails = model.ReqDetails,
+                        RequestDate = DateTime.Now,
+                        RequestFor = model.pno,
+                        RequestedIPAddress = model.RequestedIPAddress,
+                        Location = model.Location,
+                        Priority = priorityValue, // use integer value
+                        PArea = string.Join(",", model.ProblemAreas),
+                        Status = "Q"
+                    };
+
+                    db.Request_Master.Add(request);
+                    db.SaveChanges();
+
+                    TempData["Success"] = "Complaint submitted successfully.";
+                        return RedirectToAction("ComplaintsLog");
+                    }
+
+                    return View("~/Views/Admin/Complaints/FileComplaint.cshtml", model);
+                }
+            }
     }
 }

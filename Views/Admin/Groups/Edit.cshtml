@@ -1,0 +1,162 @@
+﻿@model PIA_Admin_Dashboard.Models.Group
+@{
+    ViewBag.Title = "Edit Group";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            <!-- Page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0 font-size-18">Edit Group</h4>
+                        <div class="page-title-right">
+                            @Html.ActionLink("Back to Groups", "Index", null, new { @class = "btn btn-secondary" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Messages -->
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <!-- Edit Group Form -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Group Information</h4>
+                        </div>
+                        <div class="card-body">
+                            @using (Html.BeginForm("Edit", "Groups", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(model => model.Gid)
+                                @Html.HiddenFor(model => model.Uid)
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="GroupName" class="form-label">Group Name <span class="text-danger">*</span></label>
+                                            @Html.TextBoxFor(model => model.GroupName, new
+                                            {
+                                                @class = "form-control",
+                                                placeholder = "Enter group name",
+                                                required = "required"
+                                            })
+                                            @Html.ValidationMessageFor(model => model.GroupName, "", new { @class = "text-danger" })
+                                            <div class="invalid-feedback">
+                                                Please provide a group name.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="ManagerPno" class="form-label">Select Manager</label>
+                                            @Html.DropDownListFor(model => model.ManagerPno,
+                                                (List<SelectListItem>)ViewBag.Agents,
+                                                "-- Select Manager --",
+                                                new { @class = "form-select" })
+                                            @Html.ValidationMessageFor(model => model.ManagerPno, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="ProgramId" class="form-label">Select Program</label>
+                                            @Html.DropDownListFor(model => model.ProgramId,
+                                                (List<SelectListItem>)ViewBag.Programs,
+                                                "-- Select Program --",
+                                                new { @class = "form-select" })
+                                            @Html.ValidationMessageFor(model => model.ProgramId, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="bx bx-save"></i> Update Group
+                                            </button>
+                                            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group Info Card -->
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Group Details</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-borderless table-sm">
+                                    <tr>
+                                        <td><strong>Group ID:</strong></td>
+                                        <td>@Model.Gid</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Group UID:</strong></td>
+                                        <td>
+                                            <small class="text-muted">@Model.Uid</small>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Members:</strong></td>
+                                        <td>
+                                            <span class="badge bg-info">@Model.MemberCount</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Form validation
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+
+    // Auto-hide error messages
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            var alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                var bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    });
+</script>
+

@@ -11,9 +11,21 @@ namespace PIA_Admin_Dashboard.Controllers
     {
         public ActionResult Dashboard()
         {
-            ViewBag.ScreenTitle = "Dashboard";
-            return View();
+            using (var db = new ApplicationDbContext())
+            {
+                var model = new DashboardStatusViewModel
+                {
+                    Queue = db.Request_Master.Count(r => r.Status == "Q"),
+                    Forwarded = db.Request_Master.Count(r => r.Status == "F"),
+                    Resolved = db.Request_Master.Count(r => r.Status == "R"),
+                    In_Progress = db.Request_Master.Count(r => r.Status == "P"),
+                    Closed = db.Request_Master.Count(r => r.Status == "C")
+                };
+
+                return View(model);
+            }
         }
+
         public ActionResult Departments()
         {
             ViewBag.ScreenTitle = "Departments Management";
@@ -28,8 +40,10 @@ namespace PIA_Admin_Dashboard.Controllers
 
         public ActionResult Complaints()
         {
+            ViewBag.ScreenTitle = "Complaints Handling";
             return View();
         }
+
         public ActionResult Logs()
         {
             var logs = new List<LogEntry>

@@ -89,8 +89,7 @@ namespace PIA_Admin_Dashboard.Models
         [Column("LogPortal")]
         public string LogPortal { get; set; }
 
-        // Optional: If you create Program table relationship
-        // [ForeignKey("ProgramId")]
-        // public virtual Program Program { get; set; }
+        [NotMapped]
+        public string Email { get; set; }
     }
 }

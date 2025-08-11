@@ -17,29 +17,100 @@
         <div class="card-body">
             <table class="table table-striped table-hover">
                 <tbody>
-                    <tr><th>Subject</th><td>@Model.ReqSummary</td></tr>
+                    <tr><th>Request Date</th><td>@Model.RequestDate</td></tr>
                     <tr><th>Requested By</th><td>@Model.RequestLogBy</td></tr>
                     <tr><th>Requested For</th><td>@Model.RequestFor</td></tr>
+                    <tr><th>Reported Employee Email</th><td>@Model.Email</td></tr>
                     <tr><th>Requested IP Address</th><td>@Model.RequestedIPAddress</td></tr>
-                    <tr><th>Request Date</th><td>@Model.RequestDate</td></tr>
-                    <tr><th>PArea</th><td>@Model.PArea</td></tr>
                     <tr><th>Location</th><td>@Model.Location</td></tr>
+
+                    <tr><td colspan="2" style="height: 20px;"></td></tr>
+
+                    <!-- Section Divider -->
+                    <tr>
+                        <td colspan="2">
+                            <div class="bg-success text-white text-center py-2 rounded" style="font-weight: bold;">
+                                Service Request Info
+                            </div>
+                        </td>
+                    </tr>
                     <tr><th>Priority</th><td>@Model.Priority</td></tr>
-                    <tr><th>Status</th><td>@Model.Status</td></tr>
-                    <tr><th>Forwarded to Type</th><td>@Model.ForwardToType</td></tr>
+                    <tr><th>PArea</th><td>@Model.PArea</td></tr>
+                    <tr><th>Subject</th><td>@Model.ReqSummary</td></tr>
                     <tr><th>Details</th><td>@Html.Raw(Model.ReqDetails)</td></tr>
-                    <tr><th>Requested CloseBy</th><td>@Model.ReqCloseBy</td></tr>
-                    <tr><th>Forwarded To</th><td>@Model.ForwardTo</td></tr>
-                    <tr><th>Forwarded By</th><td>@Model.ForwardBy</td></tr>
-                    <tr><th>Forwarded Remarks</th><td>@Model.ForwardedRemarks</td></tr>
-                    <tr><th>Request Close Date</th><td>@Model.ReqCloseDate</td></tr>
-                    <tr><th>Resolved By</th><td>@Model.ReqResolveBy</td></tr>
-                    <tr><th>Resolved Date</th><td>@Model.ReqResolveDate</td></tr>
-                    <tr><th>UID</th><td>@Model.UID</td></tr>
-                    <tr><th>Initial Request</th><td>@Model.InitialRequest</td></tr>
-                    <tr><th>Program ID</th><td>@Model.ProgramId</td></tr>
                 </tbody>
             </table>
+
+            <!-- Forwarding Section -->
+            <div class="bg-success text-white text-center py-2 rounded my-3">
+                Service Request Forwarding
+            </div>
+
+            <!-- Forward Form -->
+            <form method="post" action="@Url.Action("ForwardRequest", "Complaints")" class="d-inline">
+                @Html.Hidden("RequestID", Model.RequestID)
+
+                <div class="mb-3">
+                    <label class="form-label">Forward To Type</label><br />
+                    <input type="radio" name="ForwardType" value="Individual" /> Individual
+                    <input type="radio" name="ForwardType" value="Group" /> Group
+                </div>
+
+                <div class="mb-3">
+                    <label>Select Agent</label>
+                    <select id="agentSelect" name="ForwardToAgent" class="form-control" disabled>
+                        <option value="">-- Select Agent --</option>
+                        @foreach (var agent in ViewBag.Agents)
+                        {
+                            <option value="@agent.PNO">@agent.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label>Select Group</label>
+                    <select id="groupSelect" name="ForwardToGroup" class="form-control" disabled>
+                        <option value="">-- Select Group --</option>
+                        @foreach (var group in ViewBag.Groups)
+                        {
+                            <option value="@group.Gid">@group.GroupName</option>
+                        }
+                    </select>
+                </div>
+                <div class="d-flex gap-2">
+                    <!-- Forward button (in current form) -->
+                    <button type="submit" class="btn btn-success flex-fill d-flex justify-content-center align-items-center">
+                        Forward
+                    </button>
+                </div>
+            </form>
+            <div class="my-2"></div>
+            <!-- Take Ownership button (separate POST form) -->
+            <form method="post" action="@Url.Action("TakeOwnership", "Complaints")" class="flex-fill m-0">
+                @Html.Hidden("RequestID", Model.RequestID)
+                <button type="submit" class="btn btn-primary w-100 d-flex justify-content-center align-items-center">
+                    Take Ownership
+                </button>
+            </form>
+
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('input[name="ForwardType"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (this.value === "Group") {
+                    document.getElementById('groupSelect').disabled = false;
+                    document.getElementById('agentSelect').disabled = true;
+                    document.getElementById('agentSelect').value = "";
+                } else {
+                    document.getElementById('agentSelect').disabled = false;
+                    document.getElementById('groupSelect').disabled = true;
+                    document.getElementById('groupSelect').value = "";
+                }
+            });
+        });
+    </script>
+}

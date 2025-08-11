@@ -1,6 +1,139 @@
-﻿
+﻿@model PIA_Admin_Dashboard.Models.DashboardStatusViewModel
+
 @{
     ViewBag.Title = "Dashboard";
     ViewBag.ScreenTitle = "Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<style>
+    .pia-dashboard-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        padding: 20px; /* smaller padding */
+        color: #006747;
+    }
+
+    .pia-dashboard-header {
+        font-size: 1.5rem; /* smaller header */
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #006747;
+    }
+
+    .pia-stat-box {
+        text-align: center;
+        padding: 15px; /* smaller padding */
+        border-radius: 10px;
+        transition: transform 0.2s;
+    }
+
+        .pia-stat-box:hover {
+            transform: translateY(-3px);
+        }
+
+    .pia-stat-icon {
+        font-size: 2rem; /* smaller icons */
+        margin-bottom: 8px;
+    }
+
+    .pia-stat-title {
+        font-weight: 600;
+        font-size: 1rem; /* smaller title */
+    }
+
+    .pia-stat-value {
+        font-size: 1.5rem; /* smaller numbers */
+        font-weight: bold;
+    }
+
+    .bg-pia-green {
+        background-color: #006747;
+        color: #fff;
+    }
+
+    .bg-pia-gold {
+        background-color: #BFA76F;
+        color: #fff;
+    }
+
+    .bg-pia-dark {
+        background-color: #2F2F2F;
+        color: #fff;
+    }
+
+    .bg-pia-cream {
+        background-color: #F5F5DC;
+        color: #006747;
+    }
+
+    .bg-pia-blue {
+        background-color: #007BFF; /* for In Progress */
+        color: #fff;
+    }
+
+    .total-box {
+        margin-top: 20px;
+        font-size: 1.2rem; /* smaller total text */
+        text-align: center;
+        font-weight: 600;
+        color: #006747;
+    }
+    .pia-stat-column {
+        flex: 1; /* take equal width regardless of Bootstrap grid leftover space */
+        max-width: 20%; /* exactly 5 equal columns */
+    }
+</style>
+
+
+<div class="container mt-4">
+    <div class="pia-dashboard-card">
+        <div class="row d-flex flex-wrap">
+            <div class="pia-stat-column col-sm-4 mb-3">
+                <div class="pia-stat-box bg-pia-gold">
+                    <i class="fas fa-stream pia-stat-icon"></i>
+                    <div class="pia-stat-title">Queue</div>
+                    <div class="pia-stat-value">@Model.Queue</div>
+                </div>
+            </div>
+
+            <div class="pia-stat-column col-sm-4 mb-3">
+                <div class="pia-stat-box bg-pia-green">
+                    <i class="fas fa-share pia-stat-icon"></i>
+                    <div class="pia-stat-title">Forwarded</div>
+                    <div class="pia-stat-value">@Model.Forwarded</div>
+                </div>
+            </div>
+
+            <div class="pia-stat-column col-sm-4 mb-3">
+                <div class="pia-stat-box bg-pia-blue">
+                    <i class="fas fa-tasks pia-stat-icon"></i>
+                    <div class="pia-stat-title">In Progress</div>
+                    <div class="pia-stat-value">@Model.In_Progress</div>
+                </div>
+            </div>
+
+            <div class="pia-stat-column col-sm-4 mb-3">
+                <div class="pia-stat-box bg-pia-dark">
+                    <i class="fas fa-check-circle pia-stat-icon"></i>
+                    <div class="pia-stat-title">Resolved</div>
+                    <div class="pia-stat-value">@Model.Resolved</div>
+                </div>
+            </div>
+
+            <div class="pia-stat-column col-sm-4 mb-3">
+                <div class="pia-stat-box bg-pia-cream">
+                    <i class="fas fa-lock pia-stat-icon"></i>
+                    <div class="pia-stat-title">Closed</div>
+                    <div class="pia-stat-value">@Model.Closed</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="total-box">
+            Total Requests: <strong>@Model.Total</strong>
+        </div>
+    </div>
+</div>

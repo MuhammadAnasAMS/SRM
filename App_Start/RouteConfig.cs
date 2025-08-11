@@ -18,6 +18,10 @@ namespace PIA_Admin_Dashboard
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Admin", action = "Dashboard", id = UrlParameter.Optional }
             );
+
+          
+
         }
+
     }
 }

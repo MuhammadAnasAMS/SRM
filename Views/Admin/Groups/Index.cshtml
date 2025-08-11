@@ -1,34 +1,291 @@
-﻿@{
-    ViewBag.Title = "Groups";
+﻿@model IEnumerable<PIA_Admin_Dashboard.Models.Group>
+@{
+    ViewBag.Title = "Manage Groups";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="card">
-    <div class="card-header">
-        <i class="fas fa-user-friends"></i> Groups Management
-    </div>
+<style>
+    .department-section {
+        width: 95%;
+        margin: 30px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
 
-    <table class="card-table">
+    .input-container {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+        align-items: center;
+    }
+
+        .input-container input[type="text"],
+        .input-container select {
+            flex: 1;
+            padding: 14px 20px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .input-container button {
+            background-color: #28a745;
+            color: white;
+            padding: 14px 22px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .input-container button:hover {
+                background-color: #218838;
+            }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #dee2e6;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    th {
+        background-color: #f1f5f9;
+        font-weight: 700;
+    }
+
+    .action-icons i {
+        font-size: 18px;
+        margin: 0 6px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+        .action-icons i:hover {
+            transform: scale(1.2);
+        }
+
+    .view-icon {
+        color: #007bff !important;
+    }
+
+    .edit-icon {
+        color: green !important;
+    }
+
+    .delete-icon {
+        color: red !important;
+    }
+
+    .action-icons a {
+        text-decoration: none;
+    }
+
+    .badge {
+        background-color: #17a2b8;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .badge:hover {
+            background-color: #138496;
+            transform: scale(1.05);
+        }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+    .alert {
+        padding: 12px 20px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .action-icons {
+        white-space: nowrap;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header">@ViewBag.ScreenTitle</div>
+
+    <!-- Success/Error Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- Add New Group Form -->
+    @using (Html.BeginForm("Add", "Groups", FormMethod.Post, new { @class = "input-container" }))
+    {
+        <input type="text" name="GroupName" placeholder="Group Name" required />
+
+        @Html.DropDownList("ManagerPno", (List<SelectListItem>)ViewBag.Agents,
+            "-- Select Manager --", new { @class = "form-select" })
+
+        @Html.DropDownList("ProgramId", (List<SelectListItem>)ViewBag.Programs,
+            "-- Select Program --", new { @class = "form-select" })
+
+        <button type="submit">+ Add Group</button>
+    }
+
+    <!-- Groups Table -->
+    <table>
         <thead>
             <tr>
-                <th>Group ID</th>
+                <th>#</th>
+                <th>Program Name</th>
                 <th>Group Name</th>
-                <th>Description</th>
+                <th>No of Members</th>
+                <th>Manager Name</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            <!-- Add dynamic rows from database here in future -->
-            <tr>
-                <td>1</td>
-                <td>IT Support</td>
-                <td>Handles all IT-related complaints</td>
-                <td class="action-icons">
-                    <i class="fas fa-edit" title="Edit"></i>
-                    <i class="fas fa-trash-alt" title="Delete"></i>
-                </td>
-            </tr>
+            @if (Model != null && Model.Any())
+            {
+                int counter = 1;
+                foreach (var group in Model)
+                {
+                    <tr>
+                        <td>@counter</td>
+                        <td>
+                            @if (group.Program != null)
+                            {
+                                @group.Program.Name
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not Assigned</span>
+                            }
+                        </td>
+                        <td>@group.GroupName</td>
+                        <td>
+                            <a href="@Url.Action("ViewMembers", "Groups", new { id = group.Gid })"
+                               title="Click to view members">
+                                <span class="badge">@group.MemberCount</span>
+                            </a>
+                        </td>
+                        <td>
+                            @if (group.ManagerName != null)
+                            {
+                                <div>
+                                    <strong>@group.ManagerName</strong><br>
+                                    <small class="text-muted">(@group.ManagerPno)</small>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="text-muted">No Manager</span>
+                            }
+                        </td>
+                        <td class="action-icons">
+                            <a href="@Url.Action("ViewMembers", "Groups", new { id = group.Gid })" title="View Members">
+                                <i class="fas fa-users view-icon"></i>
+                            </a>
+                            <a href="@Url.Action("Edit", "Groups", new { id = group.Gid })" title="Edit">
+                                <i class="fas fa-edit edit-icon"></i>
+                            </a>
+                            <a href="#" onclick="confirmDelete(@group.Gid, '@group.GroupName')" title="Delete">
+                                <i class="fas fa-trash delete-icon"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    counter++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-muted">No groups found.</td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the group "<span id="groupNameToDelete"></span>"?</p>
+                <p style="color: red;"><small>This action cannot be undone.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a href="#" id="confirmDeleteBtn" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function confirmDelete(groupId, groupName) {
+        document.getElementById('groupNameToDelete').textContent = groupName;
+        document.getElementById('confirmDeleteBtn').href = '@Url.Action("Delete", "Groups")' + '/' + groupId;
+
+        // Use jQuery if available, otherwise vanilla JS
+        if (typeof $ !== 'undefined') {
+            $('#deleteModal').modal('show');
+        } else {
+            // Fallback: direct confirmation
+            if (confirm('Are you sure you want to delete the group "' + groupName + '"?')) {
+                window.location.href = '@Url.Action("Delete", "Groups")' + '/' + groupId;
+            }
+        }
+    }
+
+    // Auto-hide alerts after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            var alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                alert.style.display = 'none';
+            });
+        }, 5000);
+    });
+</script>
