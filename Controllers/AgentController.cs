@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace PIA_Admin_Dashboard.Controllers
 {
-    public class AgentController : Controller
+    public class AgentController : AuthenticatedController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 

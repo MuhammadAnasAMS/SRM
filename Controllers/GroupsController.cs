@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using System.Collections.Generic;
 using PIA_Admin_Dashboard.Models;
 using System.Data.Entity;
 
 namespace PIA_Admin_Dashboard.Controllers
 {
-    public class GroupsController : Controller
+    public class GroupsController : AuthenticatedController
     {
         private readonly ApplicationDbContext db = new ApplicationDbContext();
 
@@ -70,7 +70,7 @@ namespace PIA_Admin_Dashboard.Controllers
         }
 
         // GET: View Group Members
-        public ActionResult ViewMembers(int id)
+        public ActionResult ViewMembers(int id, bool showDeleteOption = false)
         {
             // Get group details with program name using anonymous object first
             var groupData = (from g in db.Groups
@@ -144,9 +144,80 @@ namespace PIA_Admin_Dashboard.Controllers
             }
 
             ViewBag.Group = groupWithProgram;
-            ViewBag.ScreenTitle = $"Group Members - {groupWithProgram.GroupName}";
+            ViewBag.ShowDeleteOption = showDeleteOption;
+            ViewBag.ScreenTitle = showDeleteOption ?
+                $"Remove Members to Delete Group - {groupWithProgram.GroupName}" :
+                $"Group Members - {groupWithProgram.GroupName}";
 
             return View("~/Views/Admin/Groups/ViewMembers.cshtml", members);
+        }
+
+        // POST: Remove member from group
+        [HttpPost]
+        public ActionResult RemoveMember(int groupId, string memberPno, bool showDeleteOption = false)
+        {
+            try
+            {
+                // Remove member from AgentGroup table
+                var result = db.Database.ExecuteSqlCommand(
+                    "DELETE FROM AgentGroup WHERE gid = @p0 AND pno = @p1",
+                    groupId, memberPno);
+
+                if (result > 0)
+                {
+                    TempData["SuccessMessage"] = "Member removed successfully.";
+
+                    // Check if this was the last member
+                    var remainingMembers = db.Database.SqlQuery<int>(
+                        "SELECT COUNT(*) FROM AgentGroup WHERE gid = @p0", groupId).FirstOrDefault();
+
+                    if (remainingMembers == 0 && showDeleteOption)
+                    {
+                        TempData["SuccessMessage"] = "Last member removed. You can now delete the group.";
+                    }
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Member not found or already removed.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error removing member: " + ex.Message;
+            }
+
+            // Maintain the delete mode if it was active
+            return RedirectToAction("ViewMembers", new { id = groupId, showDeleteOption = showDeleteOption });
+        }
+
+        // POST: Remove all members and delete group
+        [HttpPost]
+        public ActionResult RemoveAllMembersAndDelete(int groupId)
+        {
+            try
+            {
+                var group = db.Groups.Find(groupId);
+                if (group == null)
+                {
+                    TempData["ErrorMessage"] = "Group not found.";
+                    return RedirectToAction("Index");
+                }
+
+                // Remove all members first
+                db.Database.ExecuteSqlCommand("DELETE FROM AgentGroup WHERE gid = @p0", groupId);
+
+                // Then delete the group
+                db.Groups.Remove(group);
+                db.SaveChanges();
+
+                TempData["SuccessMessage"] = $"Group '{group.GroupName}' and all its members have been removed successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error deleting group: " + ex.Message;
+            }
+
+            return RedirectToAction("Index");
         }
 
         // POST: Add new group
@@ -289,7 +360,7 @@ namespace PIA_Admin_Dashboard.Controllers
             return View("~/Views/Admin/Groups/Edit.cshtml", updatedGroup);
         }
 
-        // Delete group
+        // Delete group (modified to handle groups with members)
         public ActionResult Delete(int id)
         {
             var group = db.Groups.Find(id);
@@ -301,7 +372,8 @@ namespace PIA_Admin_Dashboard.Controllers
 
                 if (memberCount > 0)
                 {
-                    TempData["ErrorMessage"] = $"Cannot delete group. It has {memberCount} member(s). Please remove all members first.";
+                    // Redirect to ViewMembers with delete option enabled
+                    return RedirectToAction("ViewMembers", new { id = id, showDeleteOption = true });
                 }
                 else
                 {

@@ -1,11 +1,9 @@
 ﻿@model PIA_Admin_Dashboard.Models.Program
-
 @{
     ViewBag.Title = "Edit Program";
     ViewBag.ScreenTitle = "Edit Program";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <style>
     .edit-section {
         width: 95%;
@@ -38,38 +36,69 @@
 
     .btn-group {
         display: flex;
-        justify-content: flex-end;
         gap: 12px;
-        margin-top: 30px;
+        margin-top: 25px;
     }
 
-    .btn-primary, .btn-secondary {
-        background-color: #007bff;
-        color: #fff;
-        padding: 10px 24px;
-        border: none;
+    /* Base button styles */
+    .btn {
+        padding: 12px 24px;
         border-radius: 6px;
         font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
         cursor: pointer;
-        transition: background-color 0.3s ease-in-out;
+        transition: all 0.3s ease;
+        min-width: 120px;
+        height: 44px;
+        font-size: 14px;
     }
 
-        .btn-primary:hover, .btn-secondary:hover {
-            background-color: #0056b3;
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #007bff;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
         }
 
     .btn-secondary {
-        text-decoration: none;
+        background-color: #dc3545;
+        color: white;
+    }
+
+        .btn-secondary:hover {
+            background-color: #dc3545;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+        }
+
+    /* Focus states for accessibility */
+    .btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    }
+
+    .btn-secondary:focus {
+        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
+    }
+
+    /* Active states */
+    .btn:active {
+        transform: translateY(0px);
     }
 </style>
-
 <div class="card">
     <div class="card-header">Edit Program Details</div>
-
     @using (Html.BeginForm())
     {
         @Html.HiddenFor(m => m.ProgramId)
-
         <div class="form-group">
             @Html.LabelFor(m => m.Name, "Program Name")
             @Html.TextBoxFor(m => m.Name, new
@@ -79,10 +108,9 @@
                 required = "required"
             })
         </div>
-
         <div class="btn-group">
-            <button type="submit" class="btn btn-primary">💾</button>
-            <a href="@Url.Action("Index", "Program")" class="btn btn-secondary">❌</a>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="@Url.Action("Index", "Program")" class="btn btn-secondary">Cancel</a>
         </div>
     }
 </div>

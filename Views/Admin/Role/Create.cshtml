@@ -1,0 +1,595 @@
+﻿@model PIA_Admin_Dashboard.Models.RoleViewModel
+
+@{
+    ViewBag.Title = "Create Role";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .role-form-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .form-section {
+        background: #fff;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 25px;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--pia-dark-green);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f1f5f9;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+        color: #374151;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--pia-green);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(10, 107, 66, 0.1);
+    }
+
+    .privileges-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .privilege-item {
+        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 15px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .privilege-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--pia-green), var(--pia-gold));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .privilege-item:hover {
+        border-color: var(--pia-green);
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .privilege-item:hover::before {
+        transform: scaleX(1);
+    }
+
+    .privilege-item.selected {
+        background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        border-color: var(--pia-green);
+        box-shadow: 0 4px 15px rgba(10, 107, 66, 0.2);
+    }
+
+    .privilege-item.selected::before {
+        transform: scaleX(1);
+    }
+
+    .privilege-checkbox {
+        margin-right: 12px;
+        width: 18px;
+        height: 18px;
+        accent-color: var(--pia-green);
+        cursor: pointer;
+    }
+
+    .privilege-label {
+        font-weight: 500;
+        color: #374151;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        line-height: 1.4;
+    }
+
+    .privilege-item.selected .privilege-label {
+        color: var(--pia-dark-green);
+        font-weight: 600;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 2px solid #f1f5f9;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--pia-green), var(--pia-light-green));
+        color: #fff;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(10, 107, 66, 0.2);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--pia-dark-green), var(--pia-green));
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(10, 107, 66, 0.3);
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #6b7280, #4b5563);
+        color: #fff;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(107, 114, 128, 0.2);
+    }
+
+    .btn-secondary:hover {
+        background: linear-gradient(135deg, #4b5563, #374151);
+        color: #fff;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(107, 114, 128, 0.3);
+    }
+
+    .alert {
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .alert-error {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .privilege-count {
+        background: var(--pia-green);
+        color: #fff;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: auto;
+    }
+
+    .select-all-container {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        border: 2px solid #0ea5e9;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .select-all-btn {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .select-all-btn:hover {
+        background: linear-gradient(135deg, #0284c7, #0369a1);
+        transform: scale(1.05);
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 30px;
+    }
+
+    .card-header {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--pia-dark-green);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f1f5f9;
+    }
+
+    @@media (max-width: 768px) {
+        .privileges-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .button-group {
+            flex-direction: column;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="role-form-container">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            @TempData["Error"]
+        </div>
+    }
+
+    @using (Html.BeginForm("Create", "Role", FormMethod.Post, new { @class = "role-form" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-plus-circle"></i>
+                Create New Role
+            </div>
+
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-info-circle"></i>
+                    Basic Information
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Role.Role_Name, "Role Name", new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.Role.Role_Name, new
+                    {
+                        @class = "form-control",
+                        placeholder = "Enter role name (e.g., Help Desk, Field Engineer, Admin, Manager)",
+                        required = "required"
+                    })
+                    @Html.ValidationMessageFor(m => m.Role.Role_Name, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Role.program_id, "Program ID", new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.Role.program_id, new
+                    {
+                        @class = "form-control",
+                        placeholder = "Enter program ID (default: 1)",
+                        type = "number",
+                        value = "1"
+                    })
+                    @Html.ValidationMessageFor(m => m.Role.program_id, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <!-- Privileges Section -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-shield-alt"></i>
+                    Privileges
+                    <span class="privilege-count" id="selectedCount">0 selected</span>
+                </div>
+
+                <div class="select-all-container">
+                    <span style="font-weight: 600; color: #0369a1;">
+                        <i class="fas fa-list-check"></i>
+                        Select Privileges
+                    </span>
+                    <div>
+                        <button type="button" class="select-all-btn" onclick="selectAllPrivileges()">
+                            <i class="fas fa-check-double"></i> Select All
+                        </button>
+                        <button type="button" class="select-all-btn" onclick="clearAllPrivileges()" style="background: linear-gradient(135deg, #ef4444, #dc2626); margin-left: 8px;">
+                            <i class="fas fa-times"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <div class="privileges-grid">
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'add_edit_engineer')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="add_edit_engineer" class="privilege-checkbox">
+                            <i class="fas fa-user-edit" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can Add/Edit Engineer Information
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'log_new_request')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="log_new_request" class="privilege-checkbox">
+                            <i class="fas fa-plus-square" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can Log new request
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'view_forward_requests')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="view_forward_requests" class="privilege-checkbox">
+                            <i class="fas fa-eye" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can View/Forward any Requests
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'view_only_requests')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="view_only_requests" class="privilege-checkbox">
+                            <i class="fas fa-eye-slash" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can only View Requests
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'view_forward_complaints')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="view_forward_complaints" class="privilege-checkbox">
+                            <i class="fas fa-comments" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can View/Forward only those complaints forwarded to him
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'add_edit_groups')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="add_edit_groups" class="privilege-checkbox">
+                            <i class="fas fa-users-cog" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can Add/Edit new Groups
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'add_incident_activity')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="add_incident_activity" class="privilege-checkbox">
+                            <i class="fas fa-exclamation-triangle" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can Add new Incident/Activity
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'view_incident_activity')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="view_incident_activity" class="privilege-checkbox">
+                            <i class="fas fa-list-alt" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can view Incident/Activity
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'log_noc_report')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="log_noc_report" class="privilege-checkbox">
+                            <i class="fas fa-file-medical-alt" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can Log NOC Report
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'view_group_requests')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="view_group_requests" class="privilege-checkbox">
+                            <i class="fas fa-filter" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can view only those request log by him or by his group
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'reopen_request')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="reopen_request" class="privilege-checkbox">
+                            <i class="fas fa-redo-alt" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can re-open any request
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'view_edit_messages')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="view_edit_messages" class="privilege-checkbox">
+                            <i class="fas fa-edit" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can view/edit any message
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'send_sms')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="send_sms" class="privilege-checkbox">
+                            <i class="fas fa-sms" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can send SMS
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'dispatch_hardware')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="dispatch_hardware" class="privilege-checkbox">
+                            <i class="fas fa-shipping-fast" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can dispatch/receive Hardware
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'send_password')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="send_password" class="privilege-checkbox">
+                            <i class="fas fa-key" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can Send Password
+                        </label>
+                    </div>
+
+                    <div class="privilege-item" onclick="togglePrivilege(this, 'view_reports')">
+                        <label class="privilege-label">
+                            <input type="checkbox" name="privileges" value="view_reports" class="privilege-checkbox">
+                            <i class="fas fa-chart-bar" style="margin-right: 8px; color: var(--pia-green);"></i>
+                            User can View Reports
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <a href="@Url.Action("Index", "Role")" class="btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </a>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-save"></i>
+                    Create Role
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    function togglePrivilege(element, value) {
+        const checkbox = element.querySelector('input[type="checkbox"]');
+        checkbox.checked = !checkbox.checked;
+
+        if (checkbox.checked) {
+            element.classList.add('selected');
+        } else {
+            element.classList.remove('selected');
+        }
+
+        updatePrivilegeCount();
+    }
+
+    function selectAllPrivileges() {
+        const checkboxes = document.querySelectorAll('input[name="privileges"]');
+        const items = document.querySelectorAll('.privilege-item');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = true;
+        });
+
+        items.forEach(item => {
+            item.classList.add('selected');
+        });
+
+        updatePrivilegeCount();
+    }
+
+    function clearAllPrivileges() {
+        const checkboxes = document.querySelectorAll('input[name="privileges"]');
+        const items = document.querySelectorAll('.privilege-item');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+
+        items.forEach(item => {
+            item.classList.remove('selected');
+        });
+
+        updatePrivilegeCount();
+    }
+
+    function updatePrivilegeCount() {
+        const checkedBoxes = document.querySelectorAll('input[name="privileges"]:checked');
+        const countElement = document.getElementById('selectedCount');
+        countElement.textContent = `${checkedBoxes.length} selected`;
+    }
+
+    // Prevent label click from double-toggling
+    document.querySelectorAll('.privilege-label').forEach(label => {
+        label.addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+    });
+
+    // Initialize privilege count on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        updatePrivilegeCount();
+
+        // Add animation to privilege items
+        const items = document.querySelectorAll('.privilege-item');
+        items.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                item.style.transition = 'all 0.3s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, index * 50);
+        });
+    });
+
+    // Form validation
+    document.querySelector('.role-form').addEventListener('submit', function (e) {
+        const roleName = document.querySelector('input[name="Role.Role_Name"]').value.trim();
+        const checkedPrivileges = document.querySelectorAll('input[name="privileges"]:checked');
+
+        if (!roleName) {
+            e.preventDefault();
+            alert('Please enter a role name.');
+            return;
+        }
+
+        if (checkedPrivileges.length === 0) {
+            const confirmSubmit = confirm('No privileges selected. Are you sure you want to create a role without any privileges?');
+            if (!confirmSubmit) {
+                e.preventDefault();
+                return;
+            }
+        }
+    });
+</script>

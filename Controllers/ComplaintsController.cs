@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using PIA_Admin_Dashboard.Models; 
+using PIA_Admin_Dashboard.Models;
 
 
 namespace PIA_Admin_Dashboard.Controllers
 {
-    public class ComplaintsController : Controller
+    public class ComplaintsController : AuthenticatedController
     {
         // GET: Complaints
         public ActionResult Index()
@@ -122,15 +122,32 @@ namespace PIA_Admin_Dashboard.Controllers
                     return HttpNotFound();
                 }
 
-                // Fetch the Agent email using RequestFor (which is Pno)
                 var agent = db.Agents.FirstOrDefault(a => a.PNO == request.RequestFor);
                 request.Email = agent?.Email ?? "Email not found";
-                ViewBag.Groups = db.Groups.ToList();
+
                 ViewBag.Agents = db.Agents.ToList();
+                ViewBag.Groups = db.Groups.ToList();
+
+                // FIXED: Get current logged-in user's PNO correctly
+                string currentUserPNO = null;
+                if (Session["AgentUid"] != null)
+                {
+                    var uid = Session["AgentUid"].ToString();
+                    var currentAgent = db.Agents.FirstOrDefault(a => a.AgentUid == uid);
+                    currentUserPNO = currentAgent?.PNO;
+                }
+
+                // FIXED: Check if ownership form should be shown
+                // Show form if: user owns the request AND status is not closed AND TempData indicates ownership was just taken
+                ViewBag.ShowAdditionalForm =
+                    (TempData["ShowOwnershipDetails"] != null && (bool)TempData["ShowOwnershipDetails"]) ||
+                    (request.Ownership == currentUserPNO &&
+                     !string.Equals(request.Status, "C", StringComparison.OrdinalIgnoreCase));
 
                 return View("~/Views/Admin/Complaints/ViewLog.cshtml", request);
             }
         }
+
 
         [HttpPost]
         public ActionResult ForwardRequest(int RequestID, string ForwardType, string ForwardToAgent, int? ForwardToGroup)
@@ -159,7 +176,13 @@ namespace PIA_Admin_Dashboard.Controllers
                     forwardTypeCode = "I";
                 }
 
-                string forwardedBy = User.Identity.Name;
+                string forwardedBy = null;
+                if (Session["AgentUid"] != null)
+                {
+                    var uid = Session["AgentUid"].ToString();
+                    var agent = db.Agents.FirstOrDefault(a => a.AgentUid == uid);
+                    forwardedBy = agent?.PNO;
+                }
 
                 // Append to ReqDetails with display name
                 string logEntry = $"<hr>{DateTime.Now:dd-MMM-yyyy}&nbsp;{DateTime.Now:hh:mm tt} forward to {forwardedToDisplayName} by {forwardedBy}";
@@ -180,22 +203,123 @@ namespace PIA_Admin_Dashboard.Controllers
         [HttpPost]
         public ActionResult TakeOwnership(int requestId)
         {
-            string currentUserPNO = User.Identity.Name;
-
             using (var db = new ApplicationDbContext())
             {
+                // Get current user info
+                string currentUserPNO = null;
+                string currentUserName = "Unknown User";
+
+                if (Session["AgentUid"] != null)
+                {
+                    var uid = Session["AgentUid"].ToString();
+                    var agent = db.Agents.FirstOrDefault(a => a.AgentUid == uid);
+                    if (agent != null)
+                    {
+                        currentUserPNO = agent.PNO;
+                        currentUserName = agent.Name;
+                    }
+                }
+
+                // Find the request
                 var request = db.Request_Master.FirstOrDefault(r => r.RequestID == requestId);
                 if (request != null)
                 {
+                    // Update ownership and status
                     request.Ownership = currentUserPNO;
-                    request.Status = "P";
+                    request.Status = "P"; // In Progress
+
+                    // Add ownership log entry to ReqDetails
+                    string timestamp = DateTime.Now.ToString("dd-MMM-yyyy hh:mm tt");
+                    string ownershipLogEntry = $"<hr><strong>{timestamp}</strong> - Ownership taken by <strong>{currentUserName}</strong><br/>";
+
+                    // Append to existing details (preserves all previous data)
+                    request.ReqDetails = (request.ReqDetails ?? "") + ownershipLogEntry;
+
+                    // Save changes to database
                     db.SaveChanges();
                 }
+
+                // Set TempData to show the additional form
+                TempData["ShowOwnershipDetails"] = true;
+                TempData["SuccessMessage"] = $"Ownership successfully taken by {currentUserName}";
+
+                return RedirectToAction("ViewLog", new { id = requestId });
+            }
+        }
+
+
+
+
+        public ActionResult SaveOwnershipDetails(int requestId, string ActualPArea, string AdditionalDetails, string Status)
+        {
+            try
+            {
+                using (var db = new ApplicationDbContext())
+                {
+                    var request = db.Request_Master.FirstOrDefault(r => r.RequestID == requestId);
+                    if (request != null)
+                    {
+                        // Get current user info for logging
+                        string currentUserName = "Unknown";
+                        string currentUserPNO = null;
+
+                        if (Session["AgentUid"] != null)
+                        {
+                            var uid = Session["AgentUid"].ToString();
+                            var agent = db.Agents.FirstOrDefault(a => a.AgentUid == uid);
+                            if (agent != null)
+                            {
+                                currentUserName = agent.Name;
+                                currentUserPNO = agent.PNO;
+                            }
+                        }
+
+                        // Update the actual problem area (store abbreviation)
+                        request.PArea = ActualPArea;
+
+                        // Map abbreviation to full name for logging
+                        var areaMapping = new Dictionary<string, string>
+                        {
+                            {"HW", "Hardware"},
+                            {"SW", "Software"},
+                            {"INT", "Internet"},
+                            {"NW", "Network"},
+                            {"O", "Other"}
+                        };
+
+                        string fullAreaName = areaMapping.ContainsKey(ActualPArea) ? areaMapping[ActualPArea] : ActualPArea;
+
+                        // Append additional details with proper formatting and timestamp
+                        string timestamp = DateTime.Now.ToString("dd-MMM-yyyy hh:mm tt");
+                        string logEntry = $"<hr><strong>{timestamp}</strong> - Ownership Details updated by <strong>{currentUserName}</strong><br/>" +
+                                        $"<strong>Additional Details:</strong> {AdditionalDetails}<br/>";
+
+                        // Append to existing details (preserves all previous data)
+                        request.ReqDetails = (request.ReqDetails ?? "") + logEntry;
+
+                        // Update status
+                        request.Status = Status;
+
+                        // Save changes to database
+                        db.SaveChanges();
+
+                        TempData["SuccessMessage"] = "Ownership details saved successfully!";
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Request not found.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "An error occurred while saving details. Please try again.";
+                System.Diagnostics.Debug.WriteLine($"Error in SaveOwnershipDetails: {ex.Message}");
             }
 
-            TempData["SuccessMessage"] = "You have taken ownership of the request.";
-            return RedirectToAction("ComplaintsLog");
+            return RedirectToAction("ViewLog", new { id = requestId });
         }
+
 
         [HttpGet]
         public ActionResult FileComplaint()
@@ -204,11 +328,11 @@ namespace PIA_Admin_Dashboard.Controllers
             return View("~/Views/Admin/Complaints/FileComplaint.cshtml", new ComplaintFormViewModel());
         }
 
-            [HttpPost]
-            public ActionResult FileComplaint(ComplaintFormViewModel model, string action)
+        [HttpPost]
+        public ActionResult FileComplaint(ComplaintFormViewModel model, string action)
+        {
+            using (var db = new ApplicationDbContext())
             {
-                using (var db = new ApplicationDbContext())
-                {
                 if (action == "fetch")
                 {
                     model.Name = model.Email = model.Mobile = model.ProgramName = model.Location = null;
@@ -290,11 +414,11 @@ namespace PIA_Admin_Dashboard.Controllers
                     db.SaveChanges();
 
                     TempData["Success"] = "Complaint submitted successfully.";
-                        return RedirectToAction("ComplaintsLog");
-                    }
-
-                    return View("~/Views/Admin/Complaints/FileComplaint.cshtml", model);
+                    return RedirectToAction("ComplaintsLog");
                 }
+
+                return View("~/Views/Admin/Complaints/FileComplaint.cshtml", model);
             }
+        }
     }
 }

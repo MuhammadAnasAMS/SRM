@@ -5,7 +5,7 @@ using PIA_Admin_Dashboard.Models;
 
 namespace PIA_Admin_Dashboard.Controllers
 {
-    public class ProgramController : Controller
+    public class ProgramController : AuthenticatedController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 

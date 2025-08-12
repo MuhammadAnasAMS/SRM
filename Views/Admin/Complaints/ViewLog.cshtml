@@ -7,6 +7,22 @@
 }
 
 <div class="container mt-4">
+    <!-- Display Success/Error Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
     <div class="card shadow-lg border-0 rounded-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <span>Request Details (ID: @Model.RequestID)</span>
@@ -23,6 +39,8 @@
                     <tr><th>Reported Employee Email</th><td>@Model.Email</td></tr>
                     <tr><th>Requested IP Address</th><td>@Model.RequestedIPAddress</td></tr>
                     <tr><th>Location</th><td>@Model.Location</td></tr>
+                    <tr><th>Current Status</th><td><strong>@Model.Status</strong></td></tr>
+                    <tr><th>Current Owner</th><td><strong>@(string.IsNullOrEmpty(Model.Ownership) ? "Unassigned" : Model.Ownership)</strong></td></tr>
 
                     <tr><td colspan="2" style="height: 20px;"></td></tr>
 
@@ -35,7 +53,7 @@
                         </td>
                     </tr>
                     <tr><th>Priority</th><td>@Model.Priority</td></tr>
-                    <tr><th>PArea</th><td>@Model.PArea</td></tr>
+                    <tr><th>Problem Area</th><td>@Model.PArea</td></tr>
                     <tr><th>Subject</th><td>@Model.ReqSummary</td></tr>
                     <tr><th>Details</th><td>@Html.Raw(Model.ReqDetails)</td></tr>
                 </tbody>
@@ -84,15 +102,101 @@
                     </button>
                 </div>
             </form>
-            <div class="my-2"></div>
-            <!-- Take Ownership button (separate POST form) -->
-            <form method="post" action="@Url.Action("TakeOwnership", "Complaints")" class="flex-fill m-0">
-                @Html.Hidden("RequestID", Model.RequestID)
-                <button type="submit" class="btn btn-primary w-100 d-flex justify-content-center align-items-center">
-                    Take Ownership
-                </button>
-            </form>
 
+            <div class="my-2"></div>
+
+            <!-- Take Ownership button - Only show if not already owned by someone -->
+            @if (string.IsNullOrEmpty(Model.Ownership))
+            {
+                <form id="takeOwnershipForm" method="post" action="@Url.Action("TakeOwnership", "Complaints")">
+                    <input type="hidden" name="requestId" value="@Model.RequestID" />
+                    <button type="submit" class="btn btn-primary w-100 d-flex justify-content-center align-items-center">
+                        <i class="fas fa-user-check me-2"></i>
+                        Take Ownership
+                    </button>
+                </form>
+            }
+            else
+            {
+                <!-- Show ownership status when already owned -->
+                <div class="alert alert-info d-flex align-items-center" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>This request is owned by: @Model.Ownership</strong>
+                </div>
+            }
+
+            <!-- OWNERSHIP FORM - This should appear after taking ownership -->
+            @if (ViewBag.ShowAdditionalForm == true)
+            {
+                <div class="mt-3 p-3 border rounded bg-light">
+                    <h5 class="text-primary">📝 Additional Ownership Details</h5>
+
+                    <form method="post" action="@Url.Action("SaveOwnershipDetails", "Complaints")">
+                        @Html.Hidden("requestId", Model.RequestID)
+
+                        <!-- Problem Area Reported (Read-only) -->
+                        <div class="mb-3">
+                            <label class="form-label">Problem Area Reported</label>
+                            <input type="text" class="form-control" value="@Model.PArea" readonly />
+                        </div>
+
+                        <!-- Actual Problem Area (Radio buttons) -->
+                        <div class="mb-3">
+                            <label class="form-label">Actual Problem Area <span class="text-danger">*</span></label><br />
+                            @{
+                                var problemAreas = new Dictionary<string, string>
+                        {
+                            {"HW", "Hardware"},
+                            {"SW", "Software"},
+                            {"INT", "Internet"},
+                            {"NW", "Network"},
+                            {"O", "Other"}
+                        };
+                            }
+
+                            @foreach (var area in problemAreas)
+                            {
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           name="ActualPArea"
+                                           value="@area.Key"
+                                           id="area_@area.Key.ToLower()"
+                                           required />
+                                    <label class="form-check-label" for="area_@area.Key.ToLower()">@area.Value</label>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Additional Details Textarea -->
+                        <div class="mb-3">
+                            <label class="form-label">Additional Details <span class="text-danger">*</span></label>
+                            <textarea name="AdditionalDetails"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Enter detailed information about the resolution, actions taken, or findings..."
+                                      required></textarea>
+                        </div>
+
+                        <!-- Status Dropdown -->
+                        <div class="mb-3">
+                            <label class="form-label">Update Status <span class="text-danger">*</span></label>
+                            <select name="Status" class="form-control" required>
+                                <option value="">-- Select Status --</option>
+                                <option value="P" selected>In Progress</option>
+                                <option value="R">Resolved</option>
+                                <option value="C">Closed</option>
+                            </select>
+                        </div>
+
+                        <!-- Save Button -->
+                        <button type="submit" class="btn btn-success w-100 d-flex justify-content-center align-items-center">
+                            <i class="fas fa-save me-2"></i>
+                            Save Ownership Details
+                        </button>
+                    </form>
+                </div>
+            }
         </div>
     </div>
 </div>

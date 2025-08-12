@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
 
-namespace PIA_SRM_MVC.Models
+namespace PIA_Admin_Dashboard.Models
 {
     public class ResetPasswordModel
     {

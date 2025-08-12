@@ -7,7 +7,7 @@ using PIA_Admin_Dashboard.Models;
 
 namespace PIA_Admin_Dashboard.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController : AuthenticatedController
     {
         public ActionResult Dashboard()
         {
@@ -17,8 +17,8 @@ namespace PIA_Admin_Dashboard.Controllers
                 {
                     Queue = db.Request_Master.Count(r => r.Status == "Q"),
                     Forwarded = db.Request_Master.Count(r => r.Status == "F"),
-                    Resolved = db.Request_Master.Count(r => r.Status == "R"),
                     In_Progress = db.Request_Master.Count(r => r.Status == "P"),
+                    Resolved = db.Request_Master.Count(r => r.Status == "R"),
                     Closed = db.Request_Master.Count(r => r.Status == "C")
                 };
 

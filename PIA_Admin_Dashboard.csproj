@@ -129,13 +129,13 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AgentController.cs" />
+    <Compile Include="Controllers\AuthenticatedController.cs" />
     <Compile Include="Controllers\ComplaintsController.cs" />
-    <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProgramController.cs" />
-    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\WorkAreaController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -144,10 +144,15 @@
     <Compile Include="Models\AgentViewModel.cs" />
     <Compile Include="Models\ApiEmployeeResponse.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
+    <Compile Include="Models\AuthModels\Account_Lockouts.cs" />
+    <Compile Include="Models\AuthModels\Agent_Credentials.cs" />
+    <Compile Include="Models\AuthModels\Login_Attempts.cs" />
+    <Compile Include="Models\AuthModels\Login_Logs.cs" />
+    <Compile Include="Models\AuthModels\OTP_Verifications.cs" />
+    <Compile Include="Models\AuthModels\RegistrationRequests.cs" />
     <Compile Include="Models\ComplaintFormViewModel.cs" />
     <Compile Include="Models\ComplaintsLog.cs" />
     <Compile Include="Models\DashboardStatusViewModel.cs" />
-    <Compile Include="Models\Department.cs" />
     <Compile Include="Models\Group.cs" />
     <Compile Include="Models\History.cs" />
     <Compile Include="Models\Location.cs" />
@@ -158,7 +163,6 @@
     <Compile Include="Models\Request_Master.cs" />
     <Compile Include="Models\ResetPasswordModel.cs" />
     <Compile Include="Models\Role.cs" />
-    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -167,7 +171,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\pia-logo.png" />
-    <Content Include="Database\script.sql" />
+    <Content Include="Database\Ascript.sql" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -199,16 +203,10 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Admin\Logs.cshtml" />
     <Content Include="Views\Admin\Dashboard.cshtml" />
-    <Content Include="Views\Admin\Department\Index.cshtml" />
-    <Content Include="Views\Admin\Department\Edit.cshtml" />
     <Content Include="Views\Account\GetOtp.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Shared\Account_Layout.cshtml" />
-    <Content Include="Views\Admin\User\Index.cshtml" />
-    <Content Include="Views\Admin\User\Create.cshtml" />
-    <Content Include="Views\Admin\User\Edit.cshtml" />
-    <Content Include="Views\Admin\User\Details.cshtml" />
     <Content Include="Views\Shared\_UserRowPartial.cshtml" />
     <Content Include="Views\Admin\Groups\Index.cshtml" />
     <Content Include="Views\Admin\Program\Edit.cshtml" />
@@ -225,12 +223,17 @@
     <Content Include="Views\Admin\Groups\viewMembers.cshtml" />
     <Content Include="Views\Admin\Complaints\ComplaintsLog.cshtml" />
     <Content Include="Views\Admin\Complaints\ViewLog.cshtml" />
+    <Content Include="Views\Admin\Role\Index.cshtml" />
+    <Content Include="Views\Admin\Role\Create.cshtml" />
+    <Content Include="Views\Admin\Role\Edit.cshtml" />
     <Content Include="Views\Admin\Complaints\FileComplaint.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Admin\Logs\" />
+    <Folder Include="Views\Authenticated\" />
     <Folder Include="Views\Error\" />
+    <Folder Include="Views\Role\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

@@ -12,6 +12,6 @@ namespace PIA_Admin_Dashboard.Models
         public int In_Progress { get; set; }
         public int Resolved { get; set; }
         public int Closed { get; set; }
-        public int Total => Queue + Forwarded + Resolved + Closed + In_Progress;
+        public int Total => Queue + Forwarded + In_Progress + Resolved + Closed;
     }
 }

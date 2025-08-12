@@ -1,0 +1,345 @@
+﻿@model List<PIA_Admin_Dashboard.Models.Role>
+
+@{
+    ViewBag.Title = "Role Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var programs = ViewBag.Programs as List<PIA_Admin_Dashboard.Models.Program> ?? new List<PIA_Admin_Dashboard.Models.Program>();
+}
+
+<!-- Updated Edit Role Page -->
+@* Edit Role Page Updates *@
+
+<style>
+    .department-section {
+        width: 95%;
+        margin: 30px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .input-container {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+        align-items: center;
+    }
+
+        .input-container input[type="text"],
+        .input-container select {
+            flex: 1;
+            padding: 14px 20px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .input-container button,
+        .input-container a {
+            background-color: #28a745;
+            color: white;
+            padding: 14px 22px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+            .input-container button:hover,
+            .input-container a:hover {
+                background-color: #218838;
+            }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #dee2e6;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    th {
+        background-color: #f1f5f9;
+        font-weight: 700;
+    }
+
+    .action-icons i {
+        font-size: 18px;
+        margin: 0 6px;
+        cursor: pointer;
+    }
+
+    .edit-icon {
+        color: green !important;
+    }
+
+    .delete-icon {
+        color: red !important;
+    }
+
+    .action-icons a {
+        text-decoration: none;
+    }
+
+    .user-count-badge {
+        background: linear-gradient(135deg, var(--pia-gold), #b8941f);
+        color: #fff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        display: inline-block;
+        min-width: 30px;
+        text-align: center;
+    }
+
+    .privileges-preview {
+        max-width: 300px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .alert {
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+    }
+
+    .alert-error {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .no-roles-message {
+        text-align: center;
+        color: #64748b;
+        font-style: italic;
+        padding: 40px;
+        background: #f8fafc;
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+
+    .card-header {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--pia-dark-green);
+        margin-bottom: 20px;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #374151;
+        margin-right: 10px;
+        font-size: 16px;
+    }
+
+    .debug-info {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 20px;
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    @@media (max-width: 768px) {
+        .input-container {
+            flex-direction: column;
+        }
+
+        .privileges-preview {
+            max-width: 150px;
+        }
+    }
+</style>
+
+<div class="department-section">
+    <div class="card-header">Manage Roles</div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            @TempData["Error"]
+        </div>
+    }
+
+
+
+    <!-- Filter and Add Role Form -->
+    <div class="input-container">
+        <span class="filter-label">Filter by Program:</span>
+        <select id="programFilter" onchange="filterByProgram()">
+            <option value="">All Programs</option>
+            @if (programs != null && programs.Any())
+            {
+                foreach (var prog in programs)
+                {
+                    <option value="@prog.ProgramId">@prog.Name</option>
+                }
+            }
+            else
+            {
+                <option value="" disabled>No programs available</option>
+            }
+        </select>
+        <a href="@Url.Action("Create", "Role")">+ Create New Role</a>
+    </div>
+
+    <!-- Roles Table -->
+    <table id="rolesTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Role ID</th>
+                <th>Role Name</th>
+                <th>Program ID</th>
+                <th>No of Users</th>
+                <th>Privileges</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                int index = 1;
+                foreach (var role in Model)
+                {
+                    <tr data-program-id="@(role.program_id ?? 0)">
+                        <td>@index</td>
+                        <td>@role.RoleID</td>
+                        <td style="font-weight: 600; color: var(--pia-dark-green);">@role.Role_Name</td>
+                        <td>@(role.program_id ?? 0)</td>
+                        <td>
+                            <span class="user-count-badge">@role.UserCount</span>
+                        </td>
+                        <td class="privileges-preview" title="@role.Privilege">
+                            @if (!string.IsNullOrEmpty(role.Privilege))
+                            {
+                                var privileges = role.Privilege.Split(',');
+                                if (privileges.Length > 0)
+                                {
+                                    <span>@string.Join(", ", privileges.Take(3))</span>
+                                    if (privileges.Length > 3)
+                                    {
+                                        <span>... (+@(privileges.Length - 3) more)</span>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <span style="color: #9ca3af;">No privileges assigned</span>
+                            }
+                        </td>
+                        <td class="action-icons">
+                            <a href="@Url.Action("Edit", "Role", new { id = role.RoleID })" title="Edit Role">
+                                <i class="fas fa-edit edit-icon"></i>
+                            </a>
+                            <a href="@Url.Action("Delete", "Role", new { id = role.RoleID })"
+                               onclick="return confirm('Are you sure you want to delete this role? This action cannot be undone.');" title="Delete Role">
+                                <i class="fas fa-trash delete-icon"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    index++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" style="color: #888;">No roles found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="no-roles-message">
+            <i class="fas fa-info-circle" style="font-size: 24px; margin-bottom: 10px; color: #94a3b8;"></i>
+            <p>No roles found. Click "Create New Role" to add your first role.</p>
+        </div>
+    }
+</div>
+
+<script>
+    function filterByProgram() {
+        const selectedProgramId = document.getElementById('programFilter').value;
+        const tableRows = document.querySelectorAll('#rolesTable tbody tr');
+
+        tableRows.forEach(row => {
+            const programId = row.getAttribute('data-program-id');
+
+            if (selectedProgramId === '' || programId === selectedProgramId) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Update row numbers for visible rows
+        updateRowNumbers();
+    }
+
+    function updateRowNumbers() {
+        const visibleRows = document.querySelectorAll('#rolesTable tbody tr:not([style*="display: none"])');
+        visibleRows.forEach((row, index) => {
+            const firstCell = row.querySelector('td:first-child');
+            if (firstCell && !firstCell.getAttribute('colspan')) {
+                firstCell.textContent = index + 1;
+            }
+        });
+    }
+
+    // Auto-hide alerts after 5 seconds
+    document.addEventListener('DOMContentLoaded', function () {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.transition = 'all 0.3s ease';
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    alert.remove();
+                }, 300);
+            }, 5000);
+        });
+
+        // Log debug information to console
+        console.log('Programs in ViewBag:', @Html.Raw(Json.Encode(programs)));
+    });
+</script>

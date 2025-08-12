@@ -223,9 +223,20 @@
                             <a href="@Url.Action("Edit", "Groups", new { id = group.Gid })" title="Edit">
                                 <i class="fas fa-edit edit-icon"></i>
                             </a>
-                            <a href="#" onclick="confirmDelete(@group.Gid, '@group.GroupName')" title="Delete">
-                                <i class="fas fa-trash delete-icon"></i>
-                            </a>
+                            @if (group.MemberCount > 0)
+                            {
+                                <a href="@Url.Action("Delete", "Groups", new { id = group.Gid })"
+                                   title="Remove Members to Delete Group"
+                                   onclick="return confirm('This group has @group.MemberCount member(s). You will be redirected to remove members first.')">
+                                    <i class="fas fa-user-minus delete-icon" style="color: #ffc107 !important;" title="Remove Members First"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="#" onclick="confirmDelete(@group.Gid, '@group.GroupName')" title="Delete Empty Group">
+                                    <i class="fas fa-trash delete-icon"></i>
+                                </a>
+                            }
                         </td>
                     </tr>
                     counter++;

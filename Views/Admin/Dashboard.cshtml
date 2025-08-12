@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "Dashboard";
-    ViewBag.ScreenTitle = "Dashboard";
+    ViewBag.ScreenTitle = "Service Request Manager Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -11,129 +11,533 @@
         background: #fff;
         border-radius: 20px;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        padding: 20px; /* smaller padding */
+        padding: 30px;
         color: #006747;
+        margin-bottom: 30px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .pia-dashboard-header {
-        font-size: 1.5rem; /* smaller header */
-        font-weight: bold;
-        margin-bottom: 20px;
-        text-align: center;
-        color: #006747;
+    .pia-dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
     }
+
+    /* Enhanced Header Card with Gradient and Animation */
+    .dashboard-header-card {
+        background: linear-gradient(135deg, #006747 0%, #0a6b42 50%, #10b965 100%);
+        border-radius: 24px;
+        padding: 40px;
+        margin-bottom: 40px;
+        color: #fff;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 15px 40px rgba(0, 103, 71, 0.3);
+    }
+
+    .dashboard-header-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        transform: rotate(45deg);
+        transition: all 0.8s ease;
+        pointer-events: none;
+    }
+
+    .dashboard-header-card:hover::before {
+        transform: rotate(45deg) scale(1.2);
+    }
+
+    .dashboard-header-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+    }
+
+    .dashboard-header-card:hover::after {
+        left: 100%;
+    }
+
+    .dashboard-header-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 25px 70px rgba(0, 103, 71, 0.4);
+    }
+
+    .dashboard-header-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .dashboard-header-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        color: #BFA76F;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-block;
+        position: relative;
+    }
+
+    .dashboard-header-card:hover .dashboard-header-icon {
+        transform: scale(1.1) rotate(5deg);
+        color: #d4af37;
+        text-shadow: 0 8px 20px rgba(191, 167, 111, 0.5);
+    }
+
+    .dashboard-header-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+        color: #fff;
+        transition: all 0.4s ease;
+        text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .dashboard-header-card:hover .dashboard-header-title {
+        transform: translateY(-2px);
+        text-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .dashboard-header-subtitle {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0;
+        font-weight: 400;
+        transition: all 0.4s ease;
+    }
+
+    .dashboard-header-card:hover .dashboard-header-subtitle {
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+    /* Floating particles animation */
+    @@keyframes float-particles {
+        0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+        33% { transform: translateY(-20px) rotate(120deg); opacity: 1; }
+        66% { transform: translateY(-10px) rotate(240deg); opacity: 0.8; }
+    }
+
+    .floating-particle {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 50%;
+        animation: float-particles 6s infinite linear;
+        pointer-events: none;
+    }
+
+    .floating-particle:nth-child(1) { top: 20%; left: 20%; animation-delay: 0s; }
+    .floating-particle:nth-child(2) { top: 80%; left: 80%; animation-delay: 2s; }
+    .floating-particle:nth-child(3) { top: 40%; left: 90%; animation-delay: 4s; }
+    .floating-particle:nth-child(4) { top: 70%; left: 10%; animation-delay: 1s; }
+    .floating-particle:nth-child(5) { top: 10%; left: 70%; animation-delay: 3s; }
 
     .pia-stat-box {
         text-align: center;
-        padding: 15px; /* smaller padding */
-        border-radius: 10px;
-        transition: transform 0.2s;
+        padding: 25px;
+        border-radius: 16px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid transparent;
     }
 
-        .pia-stat-box:hover {
-            transform: translateY(-3px);
-        }
+    .pia-stat-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+        transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .pia-stat-box:hover::before {
+        left: 100%;
+    }
+
+    .pia-stat-box:hover {
+        transform: translateY(-8px) scale(1.05);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
 
     .pia-stat-icon {
-        font-size: 2rem; /* smaller icons */
-        margin-bottom: 8px;
+        font-size: 3rem;
+        margin-bottom: 15px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-block;
+    }
+
+    .pia-stat-box:hover .pia-stat-icon {
+        transform: scale(1.2) rotate(10deg);
+        filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.3));
     }
 
     .pia-stat-title {
-        font-weight: 600;
-        font-size: 1rem; /* smaller title */
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
     }
 
     .pia-stat-value {
-        font-size: 1.5rem; /* smaller numbers */
-        font-weight: bold;
+        font-size: 2.5rem;
+        font-weight: 900;
+        transition: all 0.3s ease;
+    }
+
+    .pia-stat-box:hover .pia-stat-value {
+        transform: scale(1.1);
     }
 
     .bg-pia-green {
-        background-color: #006747;
+        background: linear-gradient(135deg, #006747, #0a6b42, #10b965);
         color: #fff;
     }
 
     .bg-pia-gold {
-        background-color: #BFA76F;
+        background: linear-gradient(135deg, #BFA76F, #d4af37, #e6c547);
         color: #fff;
     }
 
     .bg-pia-dark {
-        background-color: #2F2F2F;
+        background: linear-gradient(135deg, #2F2F2F, #1a1a1a, #000);
         color: #fff;
     }
 
     .bg-pia-cream {
-        background-color: #F5F5DC;
-        color: #006747;
-    }
-
-    .bg-pia-blue {
-        background-color: #007BFF; /* for In Progress */
+        background: linear-gradient(135deg, #9c7b68, #8b6d5c, #7a5f4c);
         color: #fff;
     }
 
     .total-box {
-        margin-top: 20px;
-        font-size: 1.2rem; /* smaller total text */
+        margin-top: 40px;
+        padding: 35px;
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0, #cbd5e1);
+        border-radius: 20px;
+        font-size: 1.6rem;
         text-align: center;
-        font-weight: 600;
+        font-weight: 700;
         color: #006747;
+        border: 3px solid rgba(0, 103, 71, 0.15);
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
     }
-    .pia-stat-column {
-        flex: 1; /* take equal width regardless of Bootstrap grid leftover space */
-        max-width: 20%; /* exactly 5 equal columns */
+
+    .total-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #006747, #BFA76F, #006747);
+        background-size: 200% 100%;
+        animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @@keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+
+    .total-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(0, 103, 71, 0.2);
+        border-color: #006747;
+    }
+
+    /* Enhanced Quick Actions */
+    .quick-actions-card {
+        background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+        border-radius: 20px;
+        padding: 35px;
+        margin-top: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 103, 71, 0.1);
+        transition: all 0.4s ease;
+    }
+
+    .quick-actions-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .quick-actions-title {
+        color: #006747;
+        margin-bottom: 25px;
+        font-weight: 700;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .quick-actions-title i {
+        color: #BFA76F;
+        font-size: 1.8rem;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .dashboard-header-title {
+            font-size: 2.2rem;
+        }
+
+        .dashboard-header-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .dashboard-header-icon {
+            font-size: 3rem;
+        }
+
+        .pia-stat-box {
+            margin-bottom: 20px;
+        }
+
+        .pia-stat-value {
+            font-size: 2rem;
+        }
+
+        .pia-stat-icon {
+            font-size: 2.5rem;
+        }
+
+        .total-box {
+            font-size: 1.3rem;
+        }
+    }
+
+    /* Loading animation for stats */
+    @@keyframes countUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .stat-animate {
+        animation: countUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
 </style>
 
+<!-- Enhanced Header Card -->
+<div class="dashboard-header-card">
+    <div class="floating-particle"></div>
+    <div class="floating-particle"></div>
+    <div class="floating-particle"></div>
+    <div class="floating-particle"></div>
+    <div class="floating-particle"></div>
 
-<div class="container mt-4">
-    <div class="pia-dashboard-card">
-        <div class="row d-flex flex-wrap">
-            <div class="pia-stat-column col-sm-4 mb-3">
-                <div class="pia-stat-box bg-pia-gold">
-                    <i class="fas fa-stream pia-stat-icon"></i>
-                    <div class="pia-stat-title">Queue</div>
-                    <div class="pia-stat-value">@Model.Queue</div>
-                </div>
-            </div>
+    <div class="dashboard-header-content">
+        
+        <h1 class="dashboard-header-title">Request Status Overview</h1>
+        <p class="dashboard-header-subtitle">Real-time status of all service requests</p>
+    </div>
+</div>
 
-            <div class="pia-stat-column col-sm-4 mb-3">
-                <div class="pia-stat-box bg-pia-green">
-                    <i class="fas fa-share pia-stat-icon"></i>
-                    <div class="pia-stat-title">Forwarded</div>
-                    <div class="pia-stat-value">@Model.Forwarded</div>
-                </div>
-            </div>
-
-            <div class="pia-stat-column col-sm-4 mb-3">
-                <div class="pia-stat-box bg-pia-blue">
-                    <i class="fas fa-tasks pia-stat-icon"></i>
-                    <div class="pia-stat-title">In Progress</div>
-                    <div class="pia-stat-value">@Model.In_Progress</div>
-                </div>
-            </div>
-
-            <div class="pia-stat-column col-sm-4 mb-3">
-                <div class="pia-stat-box bg-pia-dark">
-                    <i class="fas fa-check-circle pia-stat-icon"></i>
-                    <div class="pia-stat-title">Resolved</div>
-                    <div class="pia-stat-value">@Model.Resolved</div>
-                </div>
-            </div>
-
-            <div class="pia-stat-column col-sm-4 mb-3">
-                <div class="pia-stat-box bg-pia-cream">
-                    <i class="fas fa-lock pia-stat-icon"></i>
-                    <div class="pia-stat-title">Closed</div>
-                    <div class="pia-stat-value">@Model.Closed</div>
-                </div>
+<!-- Stats Cards -->
+<div class="pia-dashboard-card">
+    <div class="row">
+        <div class="col-md-3 col-sm-4 mb-3">
+            <div class="pia-stat-box bg-pia-gold stat-animate" onclick="filterByStatus('Q')" style="animation-delay: 0.1s">
+                <i class="fas fa-clock pia-stat-icon"></i>
+                <div class="pia-stat-title">Queue</div>
+                <div class="pia-stat-value" data-count="@Model.Queue">0</div>
             </div>
         </div>
 
-        <div class="total-box">
-            Total Requests: <strong>@Model.Total</strong>
+        <div class="col-md-3 col-sm-4 mb-3">
+            <div class="pia-stat-box bg-pia-green stat-animate" onclick="filterByStatus('F')" style="animation-delay: 0.3s">
+                <i class="fas fa-share pia-stat-icon"></i>
+                <div class="pia-stat-title">Forwarded</div>
+                <div class="pia-stat-value" data-count="@Model.Forwarded">0</div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-4 mb-3">
+            <div class="pia-stat-box bg-pia-blue stat-animate" onclick="filterByStatus('P')" style="animation-delay: 0.3s">
+                <i class="fas fa-tasks pia-stat-icon"></i>
+                <div class="pia-stat-title">In Progress</div>
+                <div class="pia-stat-value" data-count="@Model.In_Progress">0</div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-4 mb-3">
+            <div class="pia-stat-box bg-pia-dark stat-animate" onclick="filterByStatus('R')" style="animation-delay: 0.5s">
+                <i class="fas fa-check-circle pia-stat-icon"></i>
+                <div class="pia-stat-title">Resolved</div>
+                <div class="pia-stat-value" data-count="@Model.Resolved">0</div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-4 mb-3">
+            <div class="pia-stat-box bg-pia-cream stat-animate" onclick="filterByStatus('C')" style="animation-delay: 0.7s">
+                <i class="fas fa-lock pia-stat-icon"></i>
+                <div class="pia-stat-title">Closed</div>
+                <div class="pia-stat-value" data-count="@Model.Closed">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="total-box">
+        <i class="fas fa-chart-pie"></i> Total Requests: <strong id="totalCount" data-count="@Model.Total">0</strong>
+    </div>
+</div>
+
+<!-- Enhanced Quick Actions Section -->
+<div class="quick-actions-card">
+    <h3 class="quick-actions-title">
+        <i class="fas fa-bolt"></i> Quick Actions
+    </h3>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <a href="@Url.Action("ComplaintsLog", "Complaints")" class="btn btn-primary w-100">
+                <i class="fas fa-list"></i> View All Requests
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="@Url.Action("Index", "Agent")" class="btn btn-theme w-100">
+                <i class="fas fa-users"></i> Manage Users
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="@Url.Action("Logs", "Admin")" class="btn btn-primary w-100">
+                <i class="fas fa-file-alt"></i> System Logs
+            </a>
         </div>
     </div>
 </div>
+
+<script>
+    // Function to filter requests by status
+    function filterByStatus(status) {
+        const statusMap = {
+            'Q': 'Queue',
+            'F': 'Forwarded',
+            'P': In_Progress,
+            'R': 'Resolved',
+            'C': 'Closed'
+        };
+
+        // Add click animation
+        event.currentTarget.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            event.currentTarget.style.transform = '';
+            window.location.href = '@Url.Action("ComplaintsLog", "Complaints")' + '?status=' + statusMap[status];
+        }, 150);
+    }
+
+    // Counter animation function
+    function animateCounter(element, target, duration = 1500) {
+        const start = 0;
+        const increment = target / (duration / 16);
+        let current = start;
+
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            element.textContent = Math.floor(current);
+        }, 16);
+    }
+
+    // Enhanced page load animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate counters
+        const statValues = document.querySelectorAll('.pia-stat-value[data-count]');
+        statValues.forEach((element, index) => {
+            const target = parseInt(element.getAttribute('data-count'));
+            setTimeout(() => {
+                animateCounter(element, target);
+            }, 500 + (index * 200));
+        });
+
+        // Animate total counter
+        const totalElement = document.getElementById('totalCount');
+        if (totalElement) {
+            const totalTarget = parseInt(totalElement.getAttribute('data-count'));
+            setTimeout(() => {
+                animateCounter(totalElement, totalTarget, 2000);
+            }, 1200);
+        }
+
+        // Add stagger animation to stat boxes
+        const statBoxes = document.querySelectorAll('.pia-stat-box');
+        statBoxes.forEach((box, index) => {
+            box.style.opacity = '0';
+            box.style.transform = 'translateY(30px)';
+
+            setTimeout(() => {
+                box.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                box.style.opacity = '1';
+                box.style.transform = 'translateY(0)';
+            }, 200 + (index * 150));
+        });
+
+        // Header card entrance animation
+        const headerCard = document.querySelector('.dashboard-header-card');
+        if (headerCard) {
+            headerCard.style.opacity = '0';
+            headerCard.style.transform = 'translateY(-20px) scale(0.95)';
+
+            setTimeout(() => {
+                headerCard.style.transition = 'all 1s cubic-bezier(0.4, 0, 0.2, 1)';
+                headerCard.style.opacity = '1';
+                headerCard.style.transform = 'translateY(0) scale(1)';
+            }, 100);
+        }
+
+        // Quick actions card animation
+        const quickActionsCard = document.querySelector('.quick-actions-card');
+        if (quickActionsCard) {
+            quickActionsCard.style.opacity = '0';
+            quickActionsCard.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                quickActionsCard.style.transition = 'all 0.6s ease';
+                quickActionsCard.style.opacity = '1';
+                quickActionsCard.style.transform = 'translateY(0)';
+            }, 1000);
+        }
+    });
+
+    // Add hover sound effect (optional - you can remove if not needed)
+    document.querySelectorAll('.pia-stat-box').forEach(box => {
+        box.addEventListener('mouseenter', function() {
+            // You can add a subtle sound effect here if desired
+            this.style.zIndex = '10';
+        });
+
+        box.addEventListener('mouseleave', function() {
+            this.style.zIndex = 'auto';
+        });
+    });
+
+    // Parallax effect for header card on scroll
+    window.addEventListener('scroll', function() {
+        const headerCard = document.querySelector('.dashboard-header-card');
+        if (headerCard) {
+            const scrolled = window.pageYOffset;
+            const parallax = scrolled * 0.3;
+            headerCard.style.transform = `translateY(${parallax}px) scale(${1 - scrolled * 0.0002})`;
+        }
+    });
+</script>

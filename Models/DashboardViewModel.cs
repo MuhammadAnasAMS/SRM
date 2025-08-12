@@ -5,10 +5,10 @@ using System.Web;
 
 namespace PIA_Admin_Dashboard.Models
 {
-    public class ComplaintsLog
+    public class DashboardViewModel
     {
         public List<RequestItem> Requests { get; set; }
-
+        public DashboardStats Stats { get; set; }
 
         public int OpenRequests { get; set; }         // <-- Add this
         public int PendingRequests { get; set; }      // <-- Add this
@@ -32,4 +32,14 @@ namespace PIA_Admin_Dashboard.Models
         public string Status { get; set; }
         public string PendingSince { get; set; }
     }
+
+    public class DashboardStats
+    {
+        public int Queue { get; set; }
+        public int Forwarded { get; set; }
+        public int Resolved { get; set; }
+        public int Closed { get; set; }
+        public int Total => Queue + Forwarded + Resolved + Closed;
+    }
+
 }

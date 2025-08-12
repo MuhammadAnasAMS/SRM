@@ -34,16 +34,10 @@
         }
 
         @@keyframes float {
-            0%, 100% {
-                transform: translateY(0px) rotate(0deg);
-            }
-
-            50% {
-                transform: translateY(-5px) rotate(5deg);
-            }
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(5deg); }
         }
 
-        /* Enhanced Modern Sidebar */
         aside.main-sidebar {
             width: var(--sidebar-width);
             background: linear-gradient(180deg, var(--pia-dark-green) 0%, var(--pia-green) 100%);
@@ -55,22 +49,23 @@
             z-index: 1000;
         }
 
-            aside.main-sidebar::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: linear-gradient(45deg, transparent 49%, rgba(255,255,255,0.03) 50%, transparent 51%), linear-gradient(-45deg, transparent 49%, rgba(255,255,255,0.03) 50%, transparent 51%);
-                background-size: 20px 20px;
-                pointer-events: none;
-                opacity: 0.5;
-            }
+        aside.main-sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 49%, rgba(255,255,255,0.03) 50%, transparent 51%),
+                        linear-gradient(-45deg, transparent 49%, rgba(255,255,255,0.03) 50%, transparent 51%);
+            background-size: 20px 20px;
+            pointer-events: none;
+            opacity: 0.5;
+        }
 
-            aside.main-sidebar.collapsed {
-                width: var(--sidebar-collapsed);
-            }
+        aside.main-sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
 
         .sidebar-toggle-btn {
             background: rgba(255, 255, 255, 0.1);
@@ -90,31 +85,50 @@
             flex-shrink: 0;
         }
 
-            .sidebar-toggle-btn:hover {
-                background: var(--pia-gold);
-                transform: scale(1.05);
-                box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
-            }
+        .sidebar-toggle-btn:hover {
+            background: #B59906;
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(181, 153, 6, 0.3);
+        }
 
         .brand-link {
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.15);
+            background: linear-gradient(135deg, #006747 0%, #0a6b42 50%, #10b965 100%);
             backdrop-filter: blur(15px);
             color: #fff;
             text-decoration: none;
-            padding: 20px;
-            font-weight: 700;
+            padding: 25px;
+            font-weight: 800;
             font-size: 22px;
-            transition: all 0.3s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             margin: 0 15px 20px 15px;
-            border-radius: 16px;
+            border-radius: 20px;
             position: relative;
             overflow: hidden;
-            min-height: 60px;
+            min-height: 70px;
+            box-shadow: 0 15px 40px rgba(0, 103, 71, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
+
+            .brand-link::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+                transform: rotate(45deg);
+                transition: all 0.8s ease;
+                pointer-events: none;
+            }
+
+            .brand-link:hover::before {
+                transform: rotate(45deg) scale(1.2);
+            }
 
             .brand-link::after {
                 content: '';
@@ -123,8 +137,9 @@
                 left: -100%;
                 width: 100%;
                 height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-                transition: left 0.6s;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+                transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                pointer-events: none;
             }
 
             .brand-link:hover::after {
@@ -132,44 +147,69 @@
             }
 
             .brand-link:hover {
-                background: rgba(212, 175, 55, 0.25);
-                color: var(--pia-gold);
-                transform: translateY(-2px);
-                box-shadow: 0 12px 35px rgba(212, 175, 55, 0.2);
+                background: linear-gradient(135deg, #006747, #0a6b42, #10b965);
+                color: #fff;
+                transform: translateY(-8px) scale(1.02);
+                box-shadow: 0 25px 70px rgba(0, 103, 71, 0.4);
+                border-color: rgba(191, 167, 111, 0.3);
             }
 
         .airplane-icon {
-            font-size: 26px;
+            font-size: 28px;
             margin-right: 12px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             transform: rotate(0deg);
             display: flex;
             align-items: center;
             justify-content: center;
-            min-width: 30px;
-            height: 30px;
+            min-width: 32px;
+            height: 32px;
+            color: #BFA76F;
+            position: relative;
+            z-index: 2;
+        }
+
+        .brand-link:hover .airplane-icon {
+            transform: scale(1.1) rotate(5deg);
+            color: #d4af37;
+            text-shadow: 0 8px 20px rgba(191, 167, 111, 0.5);
+            filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.3));
         }
 
         .brand-text {
             transition: all 0.4s ease;
-            font-weight: 700;
+            font-weight: 800;
             white-space: nowrap;
             overflow: hidden;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* Fixed airplane icon positioning for collapsed state */
+        .brand-link:hover .brand-text {
+            transform: translateY(-2px);
+            text-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+        }
+
         aside.main-sidebar.collapsed .brand-link {
-            padding: 15px;
+            padding: 20px;
             justify-content: center;
+            min-height: 80px;
         }
 
         aside.main-sidebar.collapsed .airplane-icon {
             margin-right: 0;
-            font-size: 28px;
+            font-size: 32px;
             transform: rotate(-90deg);
             min-width: 40px;
             height: 40px;
             position: relative;
+        }
+
+        aside.main-sidebar.collapsed .brand-link:hover .airplane-icon {
+            transform: rotate(-90deg) scale(1.15);
+            color: #d4af37;
+            text-shadow: 0 8px 20px rgba(191, 167, 111, 0.5);
         }
 
         aside.main-sidebar.collapsed .brand-text {
@@ -181,7 +221,44 @@
             overflow: hidden;
         }
 
-        /* Modern Navigation */
+        @@keyframes float-particles {
+           0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+           33% { transform: translateY(-15px) rotate(120deg); opacity: 1; }
+           66% { transform: translateY(-8px) rotate(240deg); opacity: 0.8; }
+        }
+
+        .brand-link:hover {
+            animation: none;
+        }
+
+        .brand-link::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #006747, #BFA76F, #006747);
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+            border-radius: 20px 20px 0 0;
+        }
+
+        @@keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .brand-link:hover {
+            box-shadow: 0 25px 70px rgba(0, 103, 71, 0.4), 0 0 0 1px rgba(191, 167, 111, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .brand-link > * {
+            position: relative;
+            z-index: 2;
+        }
+
+
         .sidebar nav ul {
             list-style: none;
             padding: 0 15px;
@@ -206,38 +283,23 @@
             backdrop-filter: blur(5px);
         }
 
-            .sidebar nav a::before {
-                content: '';
-                position: absolute;
-                left: 0;
-                top: 0;
-                bottom: 0;
-                width: 4px;
-                background: var(--pia-gold);
-                border-radius: 0 4px 4px 0;
-                transform: scaleY(0);
-                transition: transform 0.3s ease;
-            }
+        .sidebar nav a::before {
+            display: none; 
+        }
 
-            .sidebar nav a:hover::before,
-            .sidebar nav a.active::before {
-                transform: scaleY(1);
-            }
+        .sidebar nav a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            transform: translateX(4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
 
-            .sidebar nav a:hover {
-                background: rgba(255, 255, 255, 0.15);
-                color: #fff;
-                transform: translateX(4px);
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            }
+        .sidebar nav a.active {
+            background: linear-gradient(135deg, var(--pia-light-green), var(--pia-green));
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(16, 185, 101, 0.4);
+        }
 
-            .sidebar nav a.active {
-                background: linear-gradient(135deg, var(--pia-gold), #b8941f);
-                color: #fff;
-                box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
-            }
-
-        /* Ensure consistent icon alignment for all navigation items */
         .sidebar nav i {
             margin-right: 12px;
             font-size: 18px;
@@ -254,14 +316,13 @@
 
         .sidebar nav a:hover i {
             transform: scale(1.1);
-            color: var(--pia-gold);
+            color: #B59906;
         }
 
         .sidebar nav a.active i {
             color: #fff;
         }
 
-        /* Collapsed State - Fixed for consistent icon alignment */
         aside.main-sidebar.collapsed .sidebar nav a {
             justify-content: center;
             padding: 16px 12px;
@@ -289,7 +350,7 @@
             overflow: hidden;
         }
 
-        /* Enhanced Tooltips with better positioning */
+       
         aside.main-sidebar.collapsed .sidebar nav a:hover::after {
             content: attr(data-tooltip);
             position: absolute;
@@ -308,7 +369,6 @@
             pointer-events: none;
         }
 
-        /* Add arrow to tooltip */
         aside.main-sidebar.collapsed .sidebar nav a:hover::before {
             content: '';
             position: absolute;
@@ -324,7 +384,6 @@
             pointer-events: none;
         }
 
-        /* Enhanced Header */
         .main-header {
             background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
             padding: 25px 40px;
@@ -346,10 +405,10 @@
             gap: 15px;
         }
 
-            .header-title i {
-                color: var(--pia-gold);
-                font-size: 32px;
-            }
+        .header-title i {
+            color: #B59906;
+            font-size: 32px;
+        }
 
         .navbar-right {
             display: flex;
@@ -362,14 +421,14 @@
             height: 44px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid var(--pia-gold);
+            border: 3px solid #B59906;
             transition: all 0.3s ease;
         }
 
-            .profile-img:hover {
-                transform: scale(1.1);
-                border-color: var(--pia-green);
-            }
+        .profile-img:hover {
+            transform: scale(1.1);
+            border-color: var(--pia-green);
+        }
 
         .btn-theme {
             background: linear-gradient(135deg, var(--pia-green), var(--pia-light-green));
@@ -386,12 +445,12 @@
             gap: 8px;
         }
 
-            .btn-theme:hover {
-                background: linear-gradient(135deg, var(--pia-dark-green), var(--pia-green));
-                color: #fff;
-                transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(10, 107, 66, 0.3);
-            }
+        .btn-theme:hover {
+            background: linear-gradient(135deg, var(--pia-dark-green), var(--pia-green));
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(10, 107, 66, 0.3);
+        }
 
         .content-wrapper {
             flex: 1;
@@ -405,7 +464,6 @@
             margin: 0 auto;
         }
 
-        /* Enhanced Cards */
         .card {
             background: #fff;
             border-radius: 20px;
@@ -418,20 +476,20 @@
             overflow: hidden;
         }
 
-            .card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 4px;
-                background: linear-gradient(90deg, var(--pia-green), var(--pia-gold));
-            }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--pia-green), var(--pia-light-green));
+        }
 
-            .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
-            }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+        }
 
         .card-header {
             font-size: 24px;
@@ -445,7 +503,6 @@
             border-bottom: 2px solid #f1f5f9;
         }
 
-        /* Modern Table Styling */
         .card-table {
             width: 100%;
             border-collapse: collapse;
@@ -455,42 +512,41 @@
             background: #fff;
         }
 
-            .card-table thead {
-                background: linear-gradient(135deg, var(--pia-green), var(--pia-light-green));
-            }
+        .card-table thead {
+            background: linear-gradient(135deg, var(--pia-green), var(--pia-light-green));
+        }
 
-            .card-table th {
-                color: #fff;
-                font-weight: 600;
-                padding: 20px 25px;
-                text-align: left;
-                font-size: 14px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
+        .card-table th {
+            color: #fff;
+            font-weight: 600;
+            padding: 20px 25px;
+            text-align: left;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-            .card-table td {
-                padding: 20px 25px;
-                border-bottom: 1px solid #f1f5f9;
-                transition: all 0.3s ease;
-                font-weight: 500;
-            }
+        .card-table td {
+            padding: 20px 25px;
+            border-bottom: 1px solid #f1f5f9;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
 
-            .card-table tbody tr {
-                transition: all 0.3s ease;
-            }
+        .card-table tbody tr {
+            transition: all 0.3s ease;
+        }
 
-                .card-table tbody tr:hover {
-                    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-                    transform: scale(1.01);
-                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-                }
+        .card-table tbody tr:hover {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
 
-                .card-table tbody tr:last-child td {
-                    border-bottom: none;
-                }
+        .card-table tbody tr:last-child td {
+            border-bottom: none;
+        }
 
-        /* Search Bar Enhancement */
         .search-container {
             background: #fff;
             border-radius: 16px;
@@ -510,12 +566,12 @@
             background: #f8fafc;
         }
 
-            .search-input:focus {
-                outline: none;
-                border-color: var(--pia-green);
-                background: #fff;
-                box-shadow: 0 0 0 3px rgba(10, 107, 66, 0.1);
-            }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--pia-green);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(10, 107, 66, 0.1);
+        }
 
         .action-icons i {
             color: var(--pia-green);
@@ -527,11 +583,11 @@
             margin: 0 4px;
         }
 
-            .action-icons i:hover {
-                transform: scale(1.2);
-                background: rgba(10, 107, 66, 0.1);
-                color: var(--pia-dark-green);
-            }
+        .action-icons i:hover {
+            transform: scale(1.2);
+            background: rgba(10, 107, 66, 0.1);
+            color: var(--pia-dark-green);
+        }
 
         .btn-primary {
             background: linear-gradient(135deg, #007BFF, #0056b3);
@@ -548,13 +604,13 @@
             transition: all 0.3s ease;
         }
 
-            .btn-primary:hover {
-                background: linear-gradient(135deg, #0056b3, #004085);
-                transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
-            }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+        }
 
-        /* Responsive Design */
+
         @@media (max-width: 768px) {
             aside.main-sidebar {
                 width: var(--sidebar-collapsed);
@@ -573,21 +629,13 @@
             }
         }
 
-        /* Animation Classes */
         .fade-in {
             animation: fadeIn 0.5s ease-in;
         }
 
         @@keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -606,34 +654,40 @@
             <div class="sidebar">
                 <nav>
                     <ul>
+
                         <li>
-                            <a href="@Url.Action("Index", "Program")" class="nav-link @(ViewBag.ScreenTitle == "Program Management" ? "active" : "")" data-tooltip="Programs">
+                            <a href="@Url.Action("Index", "Program")" class="nav-link @(ViewBag.ScreenTitle != null && ViewBag.ScreenTitle.ToString() == "Programs Management" ? "active" : "")" data-tooltip="Programs">
                                 <i class="fas fa-building"></i> <span>Programs</span>
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Index", "Agent")" class="nav-link @(ViewBag.ScreenTitle == "Agent Management" ? "active" : "")" data-tooltip="Users">
+                            <a href="@Url.Action("Index", "Agent")" class="nav-link @(ViewBag.ScreenTitle != null && (ViewBag.ScreenTitle.ToString() == "Agent Management" || ViewBag.ScreenTitle.ToString() == "User Management") ? "active" : "")" data-tooltip="Users">
                                 <i class="fas fa-users"></i> <span>Users</span>
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Index", "WorkArea")" class="nav-link @(ViewBag.ScreenTitle == "Work Area Management" ? "active" : "")" data-tooltip="Work Areas">
+                            <a href="@Url.Action("Index", "WorkArea")" class="nav-link @(ViewBag.ScreenTitle != null && ViewBag.ScreenTitle.ToString() == "Work Area Management" ? "active" : "")" data-tooltip="Work Areas">
                                 <i class="fas fa-map-marker-alt"></i> <span>Work Areas</span>
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Index", "Groups")" class="nav-link @(ViewBag.ScreenTitle == "Groups Management" ? "active" : "")" data-tooltip="Groups">
+                            <a href="@Url.Action("Index", "Groups")" class="nav-link @(ViewBag.ScreenTitle != null && ViewBag.ScreenTitle.ToString() == "Manage Groups" ? "active" : "")" data-tooltip="Groups">
                                 <i class="fas fa-user-friends"></i> <span>Groups</span>
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("ComplaintsLog", "Complaints")" class="nav-link @(ViewBag.ScreenTitle == "Complaints Handling" ? "active" : "")" data-tooltip="Complaints">
+                            <a href="@Url.Action("ComplaintsLog", "Complaints")" class="nav-link @(ViewBag.ScreenTitle != null && (ViewBag.ScreenTitle.ToString() == "Complaints Handling" || ViewBag.ScreenTitle.ToString() == "Complaints Log") ? "active" : "")" data-tooltip="Complaints">
                                 <i class="fas fa-comment"></i> <span>Complaints</span>
                             </a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Logs", "Admin")" class="nav-link @(ViewBag.ScreenTitle == "System Logs" ? "active" : "")" data-tooltip="Logs">
+                            <a href="@Url.Action("Logs", "Admin")" class="nav-link @(ViewBag.ScreenTitle != null && ViewBag.ScreenTitle.ToString() == "System Logs" ? "active" : "")" data-tooltip="Logs">
                                 <i class="fas fa-file-alt"></i> <span>Logs</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "Role")" class="nav-link @(ViewBag.ScreenTitle == "Role Management" ? "active" : "")" data-tooltip="Roles">
+                                <i class="fas fa-user-shield"></i> <span>Roles</span>
                             </a>
                         </li>
                     </ul>
@@ -652,9 +706,9 @@
                             switch (screenTitle)
                             {
                                 case "Dashboard":
+                                case "Service Request Manager Dashboard":
                                     iconClass = "fas fa-tachometer-alt";
                                     break;
-                                case "Service Request Dashboard":
                                 case "Service Request Management":
                                     iconClass = "fas fa-headset";
                                     break;
@@ -662,6 +716,7 @@
                                     iconClass = "fas fa-building";
                                     break;
                                 case "Agent Management":
+                                case "User Management":
                                     iconClass = "fas fa-users";
                                     break;
                                 case "Work Area Management":
@@ -676,25 +731,28 @@
                                 case "System Logs":
                                     iconClass = "fas fa-file-alt";
                                     break;
+                                case "Role Management":
+                                    iconClass = "fas fa-user-shield";
+                                    break;
                                 default:
                                     iconClass = "fas fa-cog";
                                     break;
                             }
                         }
+                       
 
                         <i class="@iconClass"></i>
                         @ViewBag.ScreenTitle
                     </div>
                     <div class="navbar-right">
                         <img src="~/Content/profile.png" alt="Profile" class="profile-img" onerror="this.onerror=null; this.src='https://www.w3schools.com/howto/img_avatar.png';" />
-                        <a href="@Url.Action("Login", "Account")" class="btn-theme">
+                        <a href="@Url.Action("Logout", "Account")" class="btn-theme">
                             <i class="fas fa-sign-out-alt"></i>
                             Logout
                         </a>
                     </div>
                 </div>
 
-                <!-- This is where your page content will be rendered -->
                 <div class="fade-in">
                     @RenderBody()
                 </div>
@@ -703,28 +761,25 @@
     </div>
 
     <script>
-        // Enhanced sidebar toggle with state persistence
+
         document.getElementById('sidebarToggle').addEventListener('click', function () {
             const sidebar = document.getElementById('mainSidebar');
             sidebar.classList.toggle('collapsed');
 
-            // Store state in memory for this session
             const isCollapsed = sidebar.classList.contains('collapsed');
             window.sidebarCollapsed = isCollapsed;
         });
 
-        // Restore sidebar state on page load
+
         document.addEventListener('DOMContentLoaded', function () {
-            // Restore from memory if available
+
             if (window.sidebarCollapsed) {
                 document.getElementById('mainSidebar').classList.add('collapsed');
             }
 
-            // Add fade-in animation to content
             document.querySelector('.content-inner').classList.add('fade-in');
         });
 
-        // Smooth hover effects for navigation
         document.querySelectorAll('.sidebar nav a').forEach(link => {
             link.addEventListener('mouseenter', function () {
                 if (!document.getElementById('mainSidebar').classList.contains('collapsed')) {
@@ -739,7 +794,6 @@
             });
         });
 
-        // Enhanced button hover effects
         document.querySelectorAll('.btn-primary, .btn-theme').forEach(button => {
             button.addEventListener('mouseenter', function () {
                 this.style.transform = 'translateY(-3px) scale(1.02)';
@@ -750,13 +804,12 @@
             });
         });
 
-        // Airplane icon rotation effect for brand link
         const brandLink = document.querySelector('.brand-link');
         if (brandLink) {
             brandLink.addEventListener('click', function (e) {
                 const airplaneIcon = this.querySelector('.airplane-icon');
                 if (airplaneIcon && this.href && this.href !== window.location.href) {
-                    // Add a quick spin effect before navigation
+                    
                     airplaneIcon.style.transform = 'rotate(360deg) scale(1.2)';
                     setTimeout(() => {
                         airplaneIcon.style.transform = 'rotate(0deg) scale(1)';
@@ -765,7 +818,7 @@
             });
         }
 
-        // Add floating animation to airplane icon when hovered
+        
         document.querySelector('.airplane-icon')?.addEventListener('mouseenter', function () {
             if (!document.getElementById('mainSidebar').classList.contains('collapsed')) {
                 this.style.animation = 'float 1s ease-in-out infinite';
@@ -776,11 +829,11 @@
             this.style.animation = 'none';
         });
 
-        // Enhanced tooltips for collapsed sidebar
+        
         document.querySelectorAll('.sidebar nav a').forEach(link => {
             link.addEventListener('mouseenter', function () {
                 if (document.getElementById('mainSidebar').classList.contains('collapsed')) {
-                    // Tooltip is handled by CSS, but we can add additional effects here
+                   
                     this.style.zIndex = '1002';
                 }
             });
@@ -790,7 +843,6 @@
             });
         });
 
-        // Smooth transitions for sidebar collapse/expand
         const sidebar = document.getElementById('mainSidebar');
         const observer = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
@@ -799,7 +851,7 @@
                     const airplaneIcon = sidebar.querySelector('.airplane-icon');
 
                     if (airplaneIcon) {
-                        // Ensure smooth transition for airplane icon
+                       
                         if (isCollapsed) {
                             setTimeout(() => {
                                 airplaneIcon.style.transform = 'rotate(-90deg)';
@@ -814,10 +866,8 @@
 
         observer.observe(sidebar, { attributes: true });
 
-        // Add click effects to all navigation items
         document.querySelectorAll('.sidebar nav a').forEach(link => {
             link.addEventListener('click', function () {
-                // Add a subtle click effect
                 this.style.transform = 'scale(0.95)';
                 setTimeout(() => {
                     this.style.transform = '';
@@ -825,7 +875,7 @@
             });
         });
 
-        // Performance optimization - debounce resize events
+
         function debounce(func, wait) {
             let timeout;
             return function executedFunction(...args) {
@@ -838,7 +888,6 @@
             };
         }
 
-        // Handle responsive behavior
         const handleResize = debounce(() => {
             const sidebar = document.getElementById('mainSidebar');
             if (window.innerWidth <= 768) {
@@ -848,30 +897,23 @@
 
         window.addEventListener('resize', handleResize);
 
-        // Initialize responsive behavior
         if (window.innerWidth <= 768) {
             document.getElementById('mainSidebar').classList.add('collapsed');
         }
 
-        // Add keyboard navigation support
         document.addEventListener('keydown', function (e) {
-            // Toggle sidebar with Ctrl + B
             if (e.ctrlKey && e.key === 'b') {
                 e.preventDefault();
                 document.getElementById('sidebarToggle').click();
             }
         });
 
-        // Preload important assets for better performance
         function preloadAssets() {
             const img = new Image();
             img.src = 'https://www.w3schools.com/howto/img_avatar.png';
         }
 
-        // Initialize preloading
         preloadAssets();
-
-        
     </script>
 
     @RenderSection("Scripts", required: false)
