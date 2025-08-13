@@ -175,17 +175,18 @@ namespace PIA_Admin_Dashboard.Controllers
                     forwardedToDisplayName = agent?.Name; // store name in log
                     forwardTypeCode = "I";
                 }
-
+                string forwardedByName = null;
                 string forwardedBy = null;
                 if (Session["AgentUid"] != null)
                 {
                     var uid = Session["AgentUid"].ToString();
                     var agent = db.Agents.FirstOrDefault(a => a.AgentUid == uid);
+                    forwardedByName = agent?.Name;
                     forwardedBy = agent?.PNO;
                 }
-
+                request.ForwardBy = forwardedBy;
                 // Append to ReqDetails with display name
-                string logEntry = $"<hr>{DateTime.Now:dd-MMM-yyyy}&nbsp;{DateTime.Now:hh:mm tt} forward to {forwardedToDisplayName} by {forwardedBy}";
+                string logEntry = $"<hr>{DateTime.Now:dd-MMM-yyyy}&nbsp;{DateTime.Now:hh:mm tt} forward to {forwardedToDisplayName} by {forwardedByName}";
                 request.ReqDetails = (request.ReqDetails ?? "") + logEntry;
 
                 // Update DB fields
