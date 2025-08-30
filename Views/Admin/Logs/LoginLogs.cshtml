@@ -1,0 +1,158 @@
+﻿@model IEnumerable<PIA_Admin_Dashboard.Models.LogEntry>
+@{
+    ViewBag.Title = "Login Logs";
+    ViewBag.ScreenTitle = "System Logs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .log-section {
+        width: 95%;
+        margin: 30px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .filter-container {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+        .filter-container input,
+        .filter-container select {
+            flex: 1;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .filter-container button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 18px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .filter-container button:hover {
+                background-color: #218838;
+            }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #dee2e6;
+        text-align: center;
+        font-size: 15px;
+    }
+
+    th {
+        background-color: #f1f5f9;
+        font-weight: 700;
+    }
+
+    .badge-success {
+        background-color: #28a745;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    .badge-danger {
+        background-color: #dc3545;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header">Login Logs</div>
+
+    <!-- Filter Form -->
+    @using (Html.BeginForm("LoginLogs", "Logs", FormMethod.Get, new { @class = "filter-container" }))
+    {
+        <input type="text" name="searchValue" placeholder="Search by ID or Name" />
+
+        <input type="date" name="fromDate" />
+
+        <input type="date" name="toDate" />
+
+        <select name="status">
+            <option value="All">All</option>
+            <option value="Success">Success</option>
+            <option value="Failed">Failed</option>
+        </select>
+
+        <button type="submit">Filter</button>
+    }
+
+
+    <!-- Logs Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Employee ID</th>
+                <th>Employee Name</th>
+                <th>IP Address</th>
+                <th>Status</th>
+                <th>Login Date & Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                int counter = 1;
+                foreach (var log in Model)
+                {
+                    <tr>
+                        <td>@counter</td>
+                        <td>@log.EmployeeId</td>
+                        <td>@log.EmployeeName</td>
+                        <td>@log.IpAddress</td>
+                        <td>
+                            @if (log.Status == "Success")
+                            {
+                                <span class="badge-success">Success</span>
+                            }
+                            else
+                            {
+                                <span class="badge-danger">Failed</span>
+                            }
+                        </td>
+                        <td>@log.DateTime.ToString("dd-MMM-yyyy hh:mm tt")</td>
+                    </tr>
+                    counter++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-muted">No login logs found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

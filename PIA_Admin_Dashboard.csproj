@@ -134,6 +134,7 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LogsController.cs" />
     <Compile Include="Controllers\ProgramController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\WorkAreaController.cs" />
@@ -227,10 +228,10 @@
     <Content Include="Views\Admin\Role\Create.cshtml" />
     <Content Include="Views\Admin\Role\Edit.cshtml" />
     <Content Include="Views\Admin\Complaints\FileComplaint.cshtml" />
+    <Content Include="Views\Admin\Logs\LoginLogs.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Admin\Logs\" />
     <Folder Include="Views\Authenticated\" />
     <Folder Include="Views\Error\" />
     <Folder Include="Views\Role\" />
